@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KanMind</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div class="kanban-container">
+            <h1>KanMind</h1>
+            
+            <div class="board" id="kanban-board">
+                <div class="column" data-status="todo">
+                    <div class="column-header">
+                        <h2 class="column-title">📋 To Do</h2>
+                        <span class="task-count" id="todo-count">0</span>
+                    </div>
+                    <div class="tasks" id="todo-tasks"></div>
+                    <button class="add-task-btn" onclick="addNewTaskModal('todo')">
+                        <span class="plus-icon">+</span>
+                        Add New Task
+                    </button>
+                </div>
+
+                <div class="column" data-status="inprogress">
+                    <div class="column-header">
+                        <h2 class="column-title">🔄 In Progress</h2>
+                        <span class="task-count" id="inprogress-count">0</span>
+                    </div>
+                    <div class="tasks" id="inprogress-tasks"></div>
+                    <button class="add-task-btn" onclick="addNewTaskModal('inprogress')">
+                        <span class="plus-icon">+</span>
+                        Add New Task
+                    </button>
+                </div>
+
+                <div class="column" data-status="review">
+                    <div class="column-header">
+                        <h2 class="column-title">👀 Review</h2>
+                        <span class="task-count" id="review-count">0</span>
+                    </div>
+                    <div class="tasks" id="review-tasks"></div>
+                    <button class="add-task-btn" onclick="addNewTaskModal('review')">
+                        <span class="plus-icon">+</span>
+                        Add New Task
+                    </button>
+                </div>
+
+                <div class="column" data-status="done">
+                    <div class="column-header">
+                        <h2 class="column-title">✅ Done</h2>
+                        <span class="task-count" id="done-count">0</span>
+                    </div>
+                    <div class="tasks" id="done-tasks"></div>
+                    <button class="add-task-btn" onclick="addNewTaskModal('done')">
+                        <span class="plus-icon">+</span>
+                        Add New Task
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-tasks">0</div>
+                    <div class="stat-label">Total Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completed-tasks">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="progress-percent">0%</div>
+                    <div class="stat-label">Progress</div>
+                </div>
+            </div>
+        </div>
+        <div class="section-limit">
+        <section id="newTaskModal" class="modal hide">
+            <div class="tasks" id="inprogress-tasks">
+                <div class="inner-modal" data-task-id="task-1">
+                    <div class="task-title"><input placeholder="Title"></div>
+                    <div class="task-description"><input placeholder="Description"></div>
+                    <div class="">
+                        <label class="task-priority" for="tempB">Priority:</label><br />
+                        <input type="range" min="0" max="2" id="temp3" name="temp3" list="values">
+
+                        <datalist id="values">
+                            <option value="0" label="low"></option>
+                            <option value="1" label="medium"></option>
+                            <option value="2" label="high"></option>
+                        </datalist>
+                    </div>
+                    <div class="task-meta">
+                    <input placeholder="Name">
+                    </div>
+                    <input id="status" type="hidden" value="">
+                </div>
+                <button class="btn btn-submit">Submit</button>
+                <button class="btn btn-cancel" id="cancelAdd">Cancel</button>
+            </div>
+        </section>
+        </div>
+
+        <div id="modalOverlay" class="overlay hide"></div>
+
+        <script src="js-files/tasks.js"></script>
+        <script src="js-files/boards.js"></script>
+
+</body>
+</html>
