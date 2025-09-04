@@ -8,9 +8,36 @@
     </head>
 
     <body>
+        <header class="header">
+            <div class="header-container">
+                <h1>KanMind</h1>
+                <div class="header-content">
+                    <div class="main-buttons-div">
+                    <button class="main-add add-task-btn" id="addTask" onclick="addNewTaskModal('todo')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Task
+                    </button>
+                    <input id="check01" class="main-add-board" type="checkbox" name="menu" />
+                    <label for="check01">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="20" width="20">
+                            <path fill="#FFFFFF" d="M128 192l128 128 128-128z"/>
+                        </svg>
+
+                        </label>
+                    <ul class="submenu">
+
+                        Add board
+
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
         <div class="kanban-container">
-            <h1>KanMind</h1>
-            
             <div class="board" id="kanban-board">
                 <div class="column" data-status="todo">
                     <div class="column-header">
