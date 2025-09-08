@@ -73,6 +73,9 @@
             console.log(title);
             console.log(statusValue);
             console.log(priority.value);
+            if (!title.value || description.value || priority.value || author.value || statusValue) {
+                return false;
+            }
             if (priority.value == 0) {
                 priorityLabel = "low"
             }
