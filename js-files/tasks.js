@@ -1,3 +1,4 @@
+        // Loading from local state
         persistence.loadTasks();
         let draggedElement = null;
         let taskIdCounter = 1;
@@ -40,6 +41,7 @@
 
         const taskArray = [];
 
+        // Create task when loading local state
         function createTaskElement(task) {
             title = document.getElementById("titleValue");
             description = document.getElementById("descriptionValue");
@@ -66,6 +68,7 @@
             return taskDiv;
         }
 
+        // Create task live
         function createBaseTaskElement(task) {
             title = document.getElementById("titleValue");
             description = document.getElementById("descriptionValue");
@@ -73,14 +76,13 @@
             author = document.getElementById("authorValue");
             statusValue = document.getElementById("modalSubmit");
             statusValue = statusValue.name;
-            console.log(title.value);
-            console.log(description.value);
-            console.log(author.value);
-            console.log(statusValue);
-            console.log(priority.value);
+
+            // Abandon adding task if missing value
             if (!title.value || !description.value || !priority.value || !author.value || !statusValue) {
                 return false;
             }
+
+            // Priority number to label
             if (priority.value == 0) {
                 priorityLabel = "low"
             }
@@ -95,7 +97,6 @@
             taskDiv.draggable = true;
             taskID = ++taskIdCounter;
             taskDiv.dataset.taskId = taskID;
-            console.log(taskID);
             
             taskDiv.innerHTML = `
                 <div class="task-title">${title.value}</div>
@@ -118,8 +119,9 @@
                 assignee: author.value,
                 status: statusValue
             };
+            // Add to array for local state
             taskArray.push(newTask);
-            console.log(taskArray);
+            // Saving local state
             persistence.saveTasks();
             return taskDiv;
         }
@@ -203,6 +205,7 @@
             document.getElementById("titleValue").select();
         }
 
+        // 
         function addNewTask(status) {
             // modal form values
             
@@ -247,16 +250,16 @@
             modal.classList.add("hide");
             overlay.classList.add("hide");
             var inputs = document.querySelectorAll('input');
+            // Reset input values
             inputs.forEach(function(input) {
                 input.value = '';
             });
         };
 
+        // Closing modal for the following
         closeModalBtn.addEventListener("click", closeModal);
         clickSubmit.addEventListener("click", closeModal);
-
         overlay.addEventListener("click", closeModal);
-
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" && !modal.classList.contains("hide")) {
                 closeModal();

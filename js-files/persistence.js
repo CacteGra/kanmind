@@ -1,7 +1,9 @@
 persistence = {
 
     saveTasks: function() {
+        // Save tasks
         localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
+        // Save task count
         localStorage.setItem('taskIdCounter', JSON.stringify(taskIdCounter));
     },
 
