@@ -1,3 +1,4 @@
+        persistence.loadTasks();
         let draggedElement = null;
         let taskIdCounter = 1;
 
@@ -37,6 +38,8 @@
             }
         ];
 
+        const taskArray = [];
+
         function createTaskElement(task) {
             title = document.getElementById("titleValue");
             description = document.getElementById("descriptionValue");
@@ -70,10 +73,12 @@
             author = document.getElementById("authorValue");
             statusValue = document.getElementById("modalSubmit");
             statusValue = statusValue.name;
-            console.log(title);
+            console.log(title.value);
+            console.log(description.value);
+            console.log(author.value);
             console.log(statusValue);
             console.log(priority.value);
-            if (!title.value || description.value || priority.value || author.value || statusValue) {
+            if (!title.value || !description.value || !priority.value || !author.value || !statusValue) {
                 return false;
             }
             if (priority.value == 0) {
@@ -88,7 +93,9 @@
             const taskDiv = document.createElement('div');
             taskDiv.className = 'task';
             taskDiv.draggable = true;
-            taskDiv.dataset.taskId = task.id;
+            taskID = ++taskIdCounter;
+            taskDiv.dataset.taskId = taskID;
+            console.log(taskID);
             
             taskDiv.innerHTML = `
                 <div class="task-title">${title.value}</div>
@@ -103,7 +110,17 @@
             taskDiv.addEventListener('dragstart', handleDragStart);
             taskDiv.addEventListener('dragend', handleDragEnd);
             document.getElementById(`${statusValue}-tasks`).appendChild(taskDiv)
-
+            const newTask = {
+                id: `task-${taskID}`,
+                title: title.value,
+                description: description.value,
+                priority: priorityLabel,
+                assignee: author.value,
+                status: statusValue
+            };
+            taskArray.push(newTask);
+            console.log(taskArray);
+            persistence.saveTasks();
             return taskDiv;
         }
 
