@@ -38,6 +38,10 @@
         ];
 
         function createTaskElement(task) {
+            title = document.getElementById("titleValue");
+            description = document.getElementById("descriptionValue");
+            priority = document.getElementById("priorityValue");
+            author = document.getElementById("authorValue");
             const taskDiv = document.createElement('div');
             taskDiv.className = 'task';
             taskDiv.draggable = true;
@@ -55,6 +59,47 @@
             // Add drag event listeners
             taskDiv.addEventListener('dragstart', handleDragStart);
             taskDiv.addEventListener('dragend', handleDragEnd);
+
+            return taskDiv;
+        }
+
+        function createBaseTaskElement(task) {
+            title = document.getElementById("titleValue");
+            description = document.getElementById("descriptionValue");
+            priority = document.getElementById("priorityValue");
+            author = document.getElementById("authorValue");
+            statusValue = document.getElementById("modalSubmit");
+            statusValue = statusValue.name;
+            console.log(title);
+            console.log(statusValue);
+            console.log(priority.value);
+            if (priority.value == 0) {
+                priorityLabel = "low"
+            }
+            else if (priority.value == 1) {
+                priorityLabel = "medium";
+            }
+            else{
+                priorityLabel = "high";
+            }
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task';
+            taskDiv.draggable = true;
+            taskDiv.dataset.taskId = task.id;
+            
+            taskDiv.innerHTML = `
+                <div class="task-title">${title.value}</div>
+                <div class="task-description">${description.value}</div>
+                <div class="task-meta">
+                    <span class="task-priority priority-${priorityLabel}">${priorityLabel}</span>
+                    <span class="task-assignee">${author.value}</span>
+                </div>
+            `;
+
+            // Add drag event listeners
+            taskDiv.addEventListener('dragstart', handleDragStart);
+            taskDiv.addEventListener('dragend', handleDragEnd);
+            document.getElementById(`${statusValue}-tasks`).appendChild(taskDiv)
 
             return taskDiv;
         }
@@ -133,7 +178,9 @@
         function addNewTaskModal(status) {
             document.getElementById("newTaskModal").classList.remove("hide");
             document.getElementById("modalOverlay").classList.remove("hide");
-            document.getElementById("status").value = status;
+            document.getElementById("modalSubmit").name = status;
+            document.getElementById("titleValue").focus();
+            document.getElementById("titleValue").select();
         }
 
         function addNewTask(status) {
@@ -171,15 +218,22 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeBoard);
 
+        // Define modal
         const closeModalBtn = document.querySelector("#cancelAdd");
         const modal = document.querySelector(".modal");
         const overlay = document.querySelector(".overlay");
+        const clickSubmit = document.querySelector("#modalSubmit");
         const closeModal = function () {
             modal.classList.add("hide");
             overlay.classList.add("hide");
+            var inputs = document.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
         };
 
         closeModalBtn.addEventListener("click", closeModal);
+        clickSubmit.addEventListener("click", closeModal);
 
         overlay.addEventListener("click", closeModal);
 

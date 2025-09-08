@@ -106,25 +106,25 @@
         <div class="section-limit">
         <section id="newTaskModal" class="modal hide">
             <div class="tasks" id="inprogress-tasks">
-                <div class="inner-modal" data-task-id="task-1">
-                    <div class="task-title"><input placeholder="Title"></div>
-                    <div class="task-description"><input placeholder="Description"></div>
+                <div class="innerModal" id="innerModal" data-task-id="task-1">
+                    <div class="task-title"><input id="titleValue" placeholder="Title" autofocus></div>
+                    <div class="task-description"><input id="descriptionValue" placeholder="Description"></div>
                     <div class="">
-                        <label class="task-priority" for="tempB">Priority:</label><br />
-                        <input type="range" min="0" max="2" id="temp3" name="temp3" list="values">
+                        <label class="task-priority" for="priority">Priority:</label><br />
+                        <input type="range" min="0" max="2" id="priorityValue" name="priority" list="values">
 
                         <datalist id="values">
-                            <option value="0" label="low"></option>
-                            <option value="1" label="medium"></option>
-                            <option value="2" label="high"></option>
+                            <option value="0" label="low">low</option>
+                            <option value="1" label="medium">medium</option>
+                            <option value="2" label="high">high</option>
                         </datalist>
                     </div>
                     <div class="task-meta">
-                    <input placeholder="Name">
+                    <input id="authorValue" placeholder="Author">
                     </div>
                     <input id="status" type="hidden" value="">
                 </div>
-                <button class="btn btn-submit">Submit</button>
+                <button class="btn btn-submit" id="modalSubmit" name="" onclick="createBaseTaskElement(this)">Submit</button>
                 <button class="btn btn-cancel" id="cancelAdd">Cancel</button>
             </div>
         </section>
