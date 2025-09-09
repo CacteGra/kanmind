@@ -1,48 +1,48 @@
         // Loading from local state
+        let taskIdCounter = 0;
+        let taskArray;
         persistence.loadTasks();
         let draggedElement = null;
-        let taskIdCounter = 1;
 
         // Sample tasks to start with
-        const initialTasks = [
-            {
-                id: 'task-1',
-                title: 'Design Landing Page',
-                description: 'Create wireframes and mockups for the new product landing page',
-                priority: 'high',
-                assignee: 'Alice',
-                status: 'todo'
-            },
-            {
-                id: 'task-2',
-                title: 'API Integration',
-                description: 'Connect frontend with the new REST API endpoints',
-                priority: 'medium',
-                assignee: 'Bob',
-                status: 'inprogress'
-            },
-            {
-                id: 'task-3',
-                title: 'User Testing',
-                description: 'Conduct usability tests with beta users',
-                priority: 'low',
-                assignee: 'Carol',
-                status: 'review'
-            },
-            {
-                id: 'task-4',
-                title: 'Database Migration',
-                description: 'Migrate user data to new database schema',
-                priority: 'high',
-                assignee: 'Dave',
-                status: 'done'
-            }
-        ];
-
-        const taskArray = [];
+        // const initialTasks = [
+        //     {
+        //         id: 'task-1',
+        //         title: 'Design Landing Page',
+        //         description: 'Create wireframes and mockups for the new product landing page',
+        //         priority: 'high',
+        //         assignee: 'Alice',
+        //         status: 'todo'
+        //     },
+        //     {
+        //         id: 'task-2',
+        //         title: 'API Integration',
+        //         description: 'Connect frontend with the new REST API endpoints',
+        //         priority: 'medium',
+        //         assignee: 'Bob',
+        //         status: 'inprogress'
+        //     },
+        //     {
+        //         id: 'task-3',
+        //         title: 'User Testing',
+        //         description: 'Conduct usability tests with beta users',
+        //         priority: 'low',
+        //         assignee: 'Carol',
+        //         status: 'review'
+        //     },
+        //     {
+        //         id: 'task-4',
+        //         title: 'Database Migration',
+        //         description: 'Migrate user data to new database schema',
+        //         priority: 'high',
+        //         assignee: 'Dave',
+        //         status: 'done'
+        //     }
+        // ];
 
         // Create task when loading local state
         function createTaskElement(task) {
+            console.log('createtaskelement');
             title = document.getElementById("titleValue");
             description = document.getElementById("descriptionValue");
             priority = document.getElementById("priorityValue");
@@ -96,7 +96,8 @@
             taskDiv.className = 'task';
             taskDiv.draggable = true;
             taskID = ++taskIdCounter;
-            taskDiv.dataset.taskId = taskID;
+            taskTaskId = `task-${taskID}`;
+            taskDiv.dataset.taskId = taskTaskId;
             
             taskDiv.innerHTML = `
                 <div class="task-title">${title.value}</div>
@@ -168,12 +169,23 @@
         function handleDrop(e) {
             e.preventDefault();
             this.classList.remove('drag-over');
-            
             if (draggedElement) {
                 const tasksContainer = this.querySelector('.tasks');
                 tasksContainer.appendChild(draggedElement);
                 updateTaskCounts();
                 updateStats();
+                const thisTaskId = draggedElement.attributes['data-task-id'];
+                // Update task status in array
+                console.log(thisTaskId.nodeValue);
+                taskArray.forEach(theTask => {
+                    console.log(theTask.id);
+                      if (theTask.id === thisTaskId.nodeValue) {
+                        console.log("if");
+                        theTask.status = this.attributes['data-status'].nodeValue;
+                      }
+                })
+                // Update local save
+                localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
             }
         }
 
@@ -220,18 +232,17 @@
             
             const taskElement = createTaskElement(newTask);
             document.getElementById(`${status}-tasks`).appendChild(taskElement);
-            
             updateTaskCounts();
             updateStats();
         }
 
         // Initialize the board
         function initializeBoard() {
-            initialTasks.forEach(task => {
-                taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
-                const taskElement = createTaskElement(task);
-                document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-            });
+            // initialTasks.forEach(task => {
+            //     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
+            //     const taskElement = createTaskElement(task);
+            //     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+            // });
             
             setupDropZones();
             updateTaskCounts();

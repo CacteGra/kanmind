@@ -10,7 +10,6 @@ persistence = {
     loadTasks: function() {
         const savedTasks = localStorage.getItem('kanMindTasks');
         const savedCounter = localStorage.getItem('taskIdCounter');
-        console.log(savedCounter);
         
         if (savedTasks) {
             const tasks = JSON.parse(savedTasks);
@@ -18,11 +17,10 @@ persistence = {
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
             });
+            taskArray = tasks;
         }
         
         if (savedCounter) {
-            console.log(savedCounter);
-            var taskIdCounter;
             taskIdCounter = parseInt(savedCounter);
         }
     }
