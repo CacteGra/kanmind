@@ -2,6 +2,7 @@
         let taskIdCounter = 0;
         let taskArray;
         persistence.loadTasks();
+        console.log(taskIdCounter);
         let draggedElement = null;
 
         // Sample tasks to start with
