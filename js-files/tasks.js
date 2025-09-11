@@ -54,7 +54,9 @@
             taskDiv.dataset.taskId = task.id;
             
             taskDiv.innerHTML = `
-                <div class="task-title">${task.title}</div>
+                <div class="task-title">${task.title}
+                <div class="delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
+                </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-meta">
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
@@ -101,7 +103,9 @@
             taskDiv.dataset.taskId = taskTaskId;
             
             taskDiv.innerHTML = `
-                <div class="task-title">${title.value}</div>
+                <div class="task-title">${title.value}
+                <button class="delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</button>
+                </div>
                 <div class="task-description">${description.value}</div>
                 <div class="task-meta">
                     <span class="task-priority priority-${priorityLabel}">${priorityLabel}</span>
@@ -218,7 +222,6 @@
             document.getElementById("titleValue").select();
         }
 
-        // 
         function addNewTask(status) {
             // modal form values
             
@@ -235,6 +238,23 @@
             document.getElementById(`${status}-tasks`).appendChild(taskElement);
             updateTaskCounts();
             updateStats();
+        }
+
+        function deleteTask(deleteId) {
+            taskArray.forEach(theTask => {
+                    console.log(theTask.id);
+                      if (theTask.id === deleteId.id) {
+                        // Delete task in array
+                        indexNumber = taskArray.indexOf(theTask);
+                        taskArray.splice(indexNumber, 1);
+                        // Save new array to local
+                        localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
+                        // Delete task in HTML by moving up the hierarchy
+                        var wholeTask = deleteId.parentNode;
+                        wholeTask = wholeTask.parentNode;
+                        wholeTask.parentNode.removeChild(wholeTask);
+                      }
+            })
         }
 
         // Initialize the board

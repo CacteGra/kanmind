@@ -107,6 +107,9 @@ h1 {
     color: #2c3e50;
     margin-bottom: 8px;
     font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .task-description {
@@ -398,4 +401,13 @@ label {
 
 #addBoard {
   width: 30px;
+}
+
+.delete-bin {
+    margin-top: -20px;
+    margin-right: -10px;
+    cursor: pointer;
+    color: transparent;
+    text-shadow: 0 0 0 red;
+    
 }
