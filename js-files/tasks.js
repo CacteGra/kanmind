@@ -1,6 +1,6 @@
         // Loading from local state
         let taskIdCounter = 0;
-        let taskArray;
+        var taskArray = [];
         persistence.loadTasks();
         console.log(taskIdCounter);
         let draggedElement = null;
@@ -51,11 +51,12 @@
             const taskDiv = document.createElement('div');
             taskDiv.className = 'task';
             taskDiv.draggable = true;
+            console.log(task.id);
             taskDiv.dataset.taskId = task.id;
             
             taskDiv.innerHTML = `
                 <div class="modify-task">
-                    <div class="edit-form" id=${task.id} onclick="editTask(this)">📝</div>
+                    <div class="edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
                     <div class="delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
                 </div>
                 <div class="task-title">${task.title}
@@ -107,7 +108,7 @@
             
             taskDiv.innerHTML = `
                 <div class="modify-task">
-                    <div class="edit-form" id=${task.id} onclick="editTask(this)">📝</div>
+                    <div class="edit-form" id=${taskTaskId} onclick="editTaskModal(this)">📝</div>
                     <div class="delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
                 </div>
                 <div class="task-title">${title.value}
@@ -228,6 +229,51 @@
             document.getElementById("titleValue").select();
         }
 
+        function editTaskModal(editTaskId) {
+            document.getElementById("editTaskModal").classList.remove("hide");
+            document.getElementById("modalOverlay").classList.remove("hide");
+            document.getElementById("editTitleValue").focus();
+            document.getElementById("editTitleValue").select();
+            var currentTask = editTaskId.parentNode.parentNode;
+            var currentTaskId = editTaskId.id;
+            var currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
+            console.log(currentColumn);
+            var statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
+            console.log(statusName);
+            console.log(currentTask.querySelector(".task-title"));
+            var currentTitle = currentTask.querySelector(".task-title");
+            var currentDescription = currentTask.querySelector(".task-description");
+            console.log(currentTask.querySelector(".task-priority"));
+            var currentPriority = currentTask.querySelector(".task-priority");
+            var currentAuthor = currentTask.querySelector(".task-assignee");
+            editModal = document.getElementById("editTaskModal");
+            editModal.innerHTML = `
+            <div class="tasks" id="inprogress-tasks">
+                <div class="innerModal" id="innerModal" data-task-id="task-1">
+                    <div class="task-title"><input id="editTitleValue" placeholder="Title" value="${currentTitle.innerText}" autofocus></div>
+                    <div class="task-description"><input id="editDescriptionValue" placeholder="Description" value="${currentDescription.innerText}"></div>
+                    <div class="">
+                        <label class="task-priority" for="priority">Priority:</label><br />
+                        <input type="range" min="0" max="2" id="editPriorityValue" name="priority" list="values" value="${currentPriority.innerText}">
+
+                        <datalist id="values">
+                            <option value="0" label="low">low</option>
+                            <option value="1" label="medium">medium</option>
+                            <option value="2" label="high">high</option>
+                        </datalist>
+                    </div>
+                    <div class="task-meta">
+                    <input id="editAuthorValue" placeholder="Author" value="${currentAuthor.innerText}">
+                    </div>
+                    <input id="editTaskStatus" type="hidden" value="${statusName.value}">
+                    <input id="taskID" type="hidden" value="${currentTaskId}">
+                </div>
+                <button class="btn btn-submit" id="editModalSubmit" name="${currentTaskId}" onclick="editTask(this)">Submit</button>
+                <button class="btn btn-cancel" id="cancelEdit">Cancel</button>
+            </div>
+            `
+        }
+
         function addNewTask(status) {
             // modal form values
             
@@ -264,29 +310,52 @@
         }
 
         function editTask(taskEdit) {
+            currentTask = document.querySelector('[data-task-id=' + taskEdit.name + ']');;
+            title = document.getElementById("editTitleValue");
+            description = document.getElementById("editDescriptionValue");
+            priority = document.getElementById("editPriorityValue");
+            if (priority.value == 0) {
+                priorityLabel = "low"
+            }
+            else if (priority.value == 1) {
+                priorityLabel = "medium";
+            }
+            else{
+                priorityLabel = "high";
+            }
+            author = document.getElementById("editAuthorValue");
+            statusValue = document.getElementById("editTaskStatus");
+            console.log(statusValue);
+            taskId = taskEdit.name;
+            const newTaskEdit = {
+                id: `${taskId}`,
+                title: title.value,
+                description: description.value,
+                priority: priorityLabel,
+                assignee: author.value,
+                status: statusValue.value
+            };
             taskArray.forEach(theTask => {
-                taskTaskId = theTask.id
+                arrayTaskId = theTask.id
                 console.log(theTask.id);
-                if (taskTaskId === taskEdit.taskId) {
+                if (arrayTaskId === newTaskEdit.id) {
                     // Edit task in array
                     indexNumber = taskArray.indexOf(theTask);
-                    taskArray.splice(indexNumber, indexNumber, taskEdit);
+                    taskArray[indexNumber] = newTaskEdit;
                     // Save edited array to local
                     localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
-                    // Edit task in HTML by moving up the hierarchy
-                    var wholeTask = editId.parentNode;
-                    wholeTask = wholeTask.parentNode;
-                    wholeTask.innerHTML = `
+                    // Edit task in HTML
+                    currentTask.innerHTML = `
                         <div class="modify-task">
-                            <div class="edit-form" id=${taskEdit.taskId} onclick="editTask(this)">📝</div>
-                            <div class="delete-bin" id=${taskEdit.taskId} onclick="deleteTask(this)">🗑️</div>
+                            <div class="edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
+                            <div class="delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
                         </div>
-                        <div class="task-title">${taskEdit.title}
+                        <div class="task-title">${newTaskEdit.title}
                         </div>
-                        <div class="task-description">${taskEdit.description}</div>
+                        <div class="task-description">${newTaskEdit.description}</div>
                         <div class="task-meta">
-                            <span class="task-priority priority-${taskEdit.priority}">${taskEdit.priority}</span>
-                            <span class="task-assignee">${taskEdit.author}</span>
+                            <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
+                            <span class="task-assignee">${newTaskEdit.assignee}</span>
                         </div>
                     `;
                 }
@@ -311,9 +380,11 @@
 
         // Define modal
         const closeModalBtn = document.querySelector("#cancelAdd");
+        const closeEditModalBtn = document.querySelector("#cancelEdit");
         const modal = document.querySelector(".modal");
         const overlay = document.querySelector(".overlay");
         const clickSubmit = document.querySelector("#modalSubmit");
+        const clickEditSubmit = document.querySelector("#editModalSubmit");
         const closeModal = function () {
             modal.classList.add("hide");
             overlay.classList.add("hide");
@@ -326,7 +397,9 @@
 
         // Closing modal for the following
         closeModalBtn.addEventListener("click", closeModal);
+        closeEditModalBtn.addEventListener("click", closeModal);
         clickSubmit.addEventListener("click", closeModal);
+        clickEditSubmit.addEventListener("click", closeModal);
         overlay.addEventListener("click", closeModal);
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" && !modal.classList.contains("hide")) {

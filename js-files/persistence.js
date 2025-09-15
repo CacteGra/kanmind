@@ -6,6 +6,7 @@ persistence = {
     },
 
     loadTasks: function() {
+        // localStorage.removeItem('kanMindTasks');
         const savedTasks = localStorage.getItem('kanMindTasks');
         
         if (savedTasks) {
