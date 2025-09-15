@@ -54,8 +54,11 @@
             taskDiv.dataset.taskId = task.id;
             
             taskDiv.innerHTML = `
+                <div class="modify-task">
+                    <div class="edit-form" id=${task.id} onclick="editTask(this)">📝</div>
+                    <div class="delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
+                </div>
                 <div class="task-title">${task.title}
-                <div class="delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-meta">
@@ -103,8 +106,11 @@
             taskDiv.dataset.taskId = taskTaskId;
             
             taskDiv.innerHTML = `
+                <div class="modify-task">
+                    <div class="edit-form" id=${task.id} onclick="editTask(this)">📝</div>
+                    <div class="delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
+                </div>
                 <div class="task-title">${title.value}
-                <button class="delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</button>
                 </div>
                 <div class="task-description">${description.value}</div>
                 <div class="task-meta">
@@ -242,18 +248,48 @@
 
         function deleteTask(deleteId) {
             taskArray.forEach(theTask => {
-                    console.log(theTask.id);
-                      if (theTask.id === deleteId.id) {
-                        // Delete task in array
-                        indexNumber = taskArray.indexOf(theTask);
-                        taskArray.splice(indexNumber, 1);
-                        // Save new array to local
-                        localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
-                        // Delete task in HTML by moving up the hierarchy
-                        var wholeTask = deleteId.parentNode;
-                        wholeTask = wholeTask.parentNode;
-                        wholeTask.parentNode.removeChild(wholeTask);
-                      }
+                console.log(theTask.id);
+                if (theTask.id === deleteId.id) {
+                    // Delete task in array
+                    indexNumber = taskArray.indexOf(theTask);
+                    taskArray.splice(indexNumber, 1);
+                    // Save new array to local
+                    localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
+                    // Delete task in HTML by moving up the hierarchy
+                    var wholeTask = deleteId.parentNode;
+                    wholeTask = wholeTask.parentNode;
+                    wholeTask.parentNode.removeChild(wholeTask);
+                }
+            })
+        }
+
+        function editTask(taskEdit) {
+            taskArray.forEach(theTask => {
+                taskTaskId = theTask.id
+                console.log(theTask.id);
+                if (taskTaskId === taskEdit.taskId) {
+                    // Edit task in array
+                    indexNumber = taskArray.indexOf(theTask);
+                    taskArray.splice(indexNumber, indexNumber, taskEdit);
+                    // Save edited array to local
+                    localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
+                    // Edit task in HTML by moving up the hierarchy
+                    var wholeTask = editId.parentNode;
+                    wholeTask = wholeTask.parentNode;
+                    wholeTask.innerHTML = `
+                        <div class="modify-task">
+                            <div class="edit-form" id=${taskEdit.taskId} onclick="editTask(this)">📝</div>
+                            <div class="delete-bin" id=${taskEdit.taskId} onclick="deleteTask(this)">🗑️</div>
+                        </div>
+                        <div class="task-title">${taskEdit.title}
+                        </div>
+                        <div class="task-description">${taskEdit.description}</div>
+                        <div class="task-meta">
+                            <span class="task-priority priority-${taskEdit.priority}">${taskEdit.priority}</span>
+                            <span class="task-assignee">${taskEdit.author}</span>
+                        </div>
+                    `;
+                }
             })
         }
 

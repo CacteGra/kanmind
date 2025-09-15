@@ -403,11 +403,21 @@ label {
   width: 30px;
 }
 
-.delete-bin {
-    margin-top: -20px;
+.modify-task {
+    display: flex;
+    justify-content: end;
+    margin-bottom: -24px;
     margin-right: -10px;
+}
+
+.delete-bin {
     cursor: pointer;
     color: transparent;
     text-shadow: 0 0 0 red;
     
+}
+
+.edit-form {
+    cursor: pointer;
+    padding-right: 10px;
 }
