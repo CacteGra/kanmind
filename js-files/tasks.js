@@ -246,31 +246,25 @@
             console.log(currentTask.querySelector(".task-priority"));
             var currentPriority = currentTask.querySelector(".task-priority");
             var currentAuthor = currentTask.querySelector(".task-assignee");
-            editModal = document.getElementById("editTaskModal");
+            var editModal = document.getElementById("innerEditModal");
             editModal.innerHTML = `
-            <div class="tasks" id="inprogress-tasks">
-                <div class="innerModal" id="innerModal" data-task-id="task-1">
-                    <div class="task-title"><input id="editTitleValue" placeholder="Title" value="${currentTitle.innerText}" autofocus></div>
-                    <div class="task-description"><input id="editDescriptionValue" placeholder="Description" value="${currentDescription.innerText}"></div>
-                    <div class="">
-                        <label class="task-priority" for="priority">Priority:</label><br />
-                        <input type="range" min="0" max="2" id="editPriorityValue" name="priority" list="values" value="${currentPriority.innerText}">
+                <div class="task-title"><input id="editTitleValue" placeholder="Title" value="${currentTitle.innerText}" autofocus></div>
+                <div class="task-description"><input id="editDescriptionValue" placeholder="Description" value="${currentDescription.innerText}"></div>
+                <div class="">
+                    <label class="task-priority" for="priority">Priority:</label><br />
+                    <input type="range" min="0" max="2" id="editPriorityValue" name="priority" list="values" value="${currentPriority.innerText}">
 
-                        <datalist id="values">
-                            <option value="0" label="low">low</option>
-                            <option value="1" label="medium">medium</option>
-                            <option value="2" label="high">high</option>
-                        </datalist>
-                    </div>
-                    <div class="task-meta">
-                    <input id="editAuthorValue" placeholder="Author" value="${currentAuthor.innerText}">
-                    </div>
-                    <input id="editTaskStatus" type="hidden" value="${statusName.value}">
-                    <input id="taskID" type="hidden" value="${currentTaskId}">
+                    <datalist id="values">
+                        <option value="0" label="low">low</option>
+                        <option value="1" label="medium">medium</option>
+                        <option value="2" label="high">high</option>
+                    </datalist>
                 </div>
-                <button class="btn btn-submit" id="editModalSubmit" name="${currentTaskId}" onclick="editTask(this)">Submit</button>
-                <button class="btn btn-cancel" id="cancelEdit">Cancel</button>
-            </div>
+                <div class="task-meta">
+                <input id="editAuthorValue" placeholder="Author" value="${currentAuthor.innerText}">
+                </div>
+                <input id="editTaskStatus" type="hidden" value="${statusName.value}">
+                <input id="taskID" type="hidden" value="${currentTaskId}">
             `
         }
 
@@ -310,7 +304,10 @@
         }
 
         function editTask(taskEdit) {
-            currentTask = document.querySelector('[data-task-id=' + taskEdit.name + ']');;
+            currentTaskId = document.getElementById('taskID');
+            taskId = currentTaskId.value;
+            currentTask = document.querySelector('[data-task-id=' + taskId + ']');
+            console.log(currentTask);
             title = document.getElementById("editTitleValue");
             description = document.getElementById("editDescriptionValue");
             priority = document.getElementById("editPriorityValue");
@@ -326,9 +323,8 @@
             author = document.getElementById("editAuthorValue");
             statusValue = document.getElementById("editTaskStatus");
             console.log(statusValue);
-            taskId = taskEdit.name;
             const newTaskEdit = {
-                id: `${taskId}`,
+                id: taskId,
                 title: title.value,
                 description: description.value,
                 priority: priorityLabel,
@@ -337,7 +333,7 @@
             };
             taskArray.forEach(theTask => {
                 arrayTaskId = theTask.id
-                console.log(theTask.id);
+                console.log(newTaskEdit.id);
                 if (arrayTaskId === newTaskEdit.id) {
                     // Edit task in array
                     indexNumber = taskArray.indexOf(theTask);
@@ -378,15 +374,31 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeBoard);
 
+        function checkHidden(element){
+          var classAttr = element.attributes['class'];
+          console.log(classAttr);
+          if (classAttr.value.indexOf('hide') !== -1) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+
         // Define modal
         const closeModalBtn = document.querySelector("#cancelAdd");
         const closeEditModalBtn = document.querySelector("#cancelEdit");
-        const modal = document.querySelector(".modal");
+        const modal = document.querySelector("#newTaskModal");
+        const editModal = document.querySelector("#editTaskModal");
         const overlay = document.querySelector(".overlay");
         const clickSubmit = document.querySelector("#modalSubmit");
         const clickEditSubmit = document.querySelector("#editModalSubmit");
         const closeModal = function () {
-            modal.classList.add("hide");
+            if (checkHidden(modal)) {
+                modal.classList.add("hide");
+            }
+            if (checkHidden(editModal)) {
+                editModal.classList.add("hide");
+            }
             overlay.classList.add("hide");
             var inputs = document.querySelectorAll('input');
             // Reset input values
@@ -402,7 +414,7 @@
         clickEditSubmit.addEventListener("click", closeModal);
         overlay.addEventListener("click", closeModal);
         document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape" && !modal.classList.contains("hide")) {
+            if (e.key === "Escape" && !modal.classList.contains("hide") || e.key === "Escape" && !editModal.classList.contains("hide")) {
                 closeModal();
             }
         });

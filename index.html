@@ -106,7 +106,7 @@
         <div class="section-limit">
         <section id="newTaskModal" class="modal hide">
             <div class="tasks" id="inprogress-tasks">
-                <div class="innerModal" id="innerModal" data-task-id="task-1">
+                <div class="innerModal" id="innerModal">
                     <div class="task-title"><input id="titleValue" placeholder="Title" autofocus></div>
                     <div class="task-description"><input id="descriptionValue" placeholder="Description"></div>
                     <div class="">
@@ -130,7 +130,7 @@
         </section>
         <section id="editTaskModal" class="modal hide">
             <div class="tasks" id="inprogress-tasks">
-                <div class="innerModal" id="innerModal" data-task-id="task-1">
+                <div class="innerModal" id="innerEditModal" data-task-id="">
                     <div class="task-title"><input id="editTitleValue" placeholder="Title" autofocus></div>
                     <div class="task-description"><input id="editDescriptionValue" placeholder="Description"></div>
                     <div class="">
@@ -148,8 +148,8 @@
                     </div>
                     <input id="editStatus" type="hidden" value="">
                 </div>
-                <button class="btn btn-submit" id="modalSubmit" name="" onclick="editTask(this)">Submit</button>
-                <button class="btn btn-cancel" id="cancelAdd">Cancel</button>
+                <button class="btn btn-submit" id="editModalSubmit" name="" onclick="editTask(this)">Submit</button>
+                <button class="btn btn-cancel" id="cancelEdit">Cancel</button>
             </div>
         </section>
         </div>
