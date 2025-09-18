@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KanMind</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="/style.css">
     </head>
 
     <body>
@@ -20,18 +20,18 @@
                         </svg>
                         Add Task
                     </button>
-                    <input id="check01" class="main-add-board" type="checkbox" name="menu" />
-                    <label for="check01">
+                    <input id="check01" class="main-add-board" type="checkbox" name="submenu" />
+                    <label  for="check01" onclick="boards.addOverlay()">
 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="20" width="20">
                             <path fill="#FFFFFF" d="M128 192l128 128 128-128z"/>
                         </svg>
 
                         </label>
-                    <ul class="submenu">
-
+                    <ul class="submenu" onclick="boards.createBoard()">
+<div class="newBoardButton">
                         Add board
-
+</div>
                     </ul>
                     </div>
                 </div>
@@ -156,9 +156,9 @@
 
         <div id="modalOverlay" class="overlay hide"></div>
 
-        <script src="js-files/persistence.js"></script>
-        <script src="js-files/tasks.js"></script>
-        <script src="js-files/boards.js"></script>
+        <script src="/js-files/persistence.js"></script>
+        <script src="/js-files/tasks.js"></script>
+        <script src="/js-files/boards.js"></script>
 
 </body>
 </html>
