@@ -400,6 +400,8 @@
                 editModal.classList.add("hide");
             }
             overlay.classList.add("hide");
+            var checkbox = document.querySelector("input[name=submenu]");
+            checkbox.checked = false;
             var inputs = document.querySelectorAll('input');
             // Reset input values
             inputs.forEach(function(input) {
