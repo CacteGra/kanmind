@@ -1,7 +1,6 @@
         // Loading from local state
         let taskIdCounter = 0;
         var taskArray = [];
-        let boardTitle;
         persistence.loadTasks();
         console.log(taskIdCounter);
         let draggedElement = null;
@@ -198,7 +197,7 @@
                       }
                 })
                 // Update local save
-                persistence.saveTasks(boardTitle)
+                localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
             }
         }
 
@@ -295,7 +294,7 @@
                     indexNumber = taskArray.indexOf(theTask);
                     taskArray.splice(indexNumber, 1);
                     // Save new array to local
-                    persistence.saveTasks();
+                    localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
                     // Delete task in HTML by moving up the hierarchy
                     var wholeTask = deleteId.parentNode;
                     wholeTask = wholeTask.parentNode;
@@ -340,7 +339,7 @@
                     indexNumber = taskArray.indexOf(theTask);
                     taskArray[indexNumber] = newTaskEdit;
                     // Save edited array to local
-                    persistence.saveTasks();
+                    localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
                     // Edit task in HTML
                     currentTask.innerHTML = `
                         <div class="modify-task">
@@ -388,14 +387,11 @@
         // Define modal
         const closeModalBtn = document.querySelector("#cancelAdd");
         const closeEditModalBtn = document.querySelector("#cancelEdit");
-        const cancelNewBoard = document.querySelector("#cancelNewBoard");
         const modal = document.querySelector("#newTaskModal");
         const editModal = document.querySelector("#editTaskModal");
-        const newBoardModal = document.querySelector("#newBoardModal");
         const overlay = document.querySelector(".overlay");
         const clickSubmit = document.querySelector("#modalSubmit");
         const clickEditSubmit = document.querySelector("#editModalSubmit");
-        const clickNewBoardSubmit = document.querySelector("#boardModalSubmit");
         const closeModal = function () {
             if (checkHidden(modal)) {
                 modal.classList.add("hide");
@@ -403,11 +399,9 @@
             if (checkHidden(editModal)) {
                 editModal.classList.add("hide");
             }
-            if (checkHidden(newBoardModal)) {
-                newBoardModal.classList.add("hide");
-            }
             overlay.classList.add("hide");
             var checkbox = document.querySelector("input[name=submenu]");
+            checkbox = document.getElementById("check01");
             checkbox.checked = false;
             var inputs = document.querySelectorAll('input');
             // Reset input values
@@ -419,10 +413,8 @@
         // Closing modal for the following
         closeModalBtn.addEventListener("click", closeModal);
         closeEditModalBtn.addEventListener("click", closeModal);
-        cancelNewBoard.addEventListener("click", closeModal);
         clickSubmit.addEventListener("click", closeModal);
         clickEditSubmit.addEventListener("click", closeModal);
-        clickNewBoardSubmit.addEventListener("click", closeModal);
         overlay.addEventListener("click", closeModal);
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" && !modal.classList.contains("hide") || e.key === "Escape" && !editModal.classList.contains("hide")) {

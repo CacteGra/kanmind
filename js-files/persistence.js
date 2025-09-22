@@ -2,12 +2,25 @@ persistence = {
 
     saveTasks: function() {
         // Save tasks
-        localStorage.setItem('kanMindTasks', JSON.stringify(taskArray));
+        console.log(boardTitle);
+        localStorage.setItem(boardTitle, JSON.stringify(taskArray));
+        localStorage.setItem('lastBoard', JSON.stringify(boardTitle));
     },
 
     loadTasks: function() {
-        // localStorage.removeItem('kanMindTasks');
-        const savedTasks = localStorage.getItem('kanMindTasks');
+        //localStorage.removeItem('kanMindTasks');
+        //localStorage.removeItem('lastBoard');
+        //localStorage.clear();
+        let lastBoardItem = localStorage.getItem('lastBoard');
+        console.log(lastBoardItem);
+        if (lastBoardItem == null) {
+            var kanMindBoard = "KanMindTasks";
+            localStorage.setItem('lastBoard', JSON.stringify(kanMindBoard));
+            lastBoardItem = localStorage.getItem('lastBoard');
+        }
+        boardTitle = JSON.parse(lastBoardItem);
+        console.log(boardTitle);
+        const savedTasks = localStorage.getItem(boardTitle);
         
         if (savedTasks) {
             const tasks = JSON.parse(savedTasks);

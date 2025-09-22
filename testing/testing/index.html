@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>KanMind</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="/style.css">
     </head>
 
     <body>
@@ -29,7 +29,9 @@
 
                         </label>
                     <ul class="submenu" onclick="boards.createBoard()">
+<div class="newBoardButton">
                         Add board
+</div>
                     </ul>
                     </div>
                 </div>
@@ -42,7 +44,7 @@
                         <h2 class="column-title">📋 To Do</h2>
                         <span class="task-count" id="todo-count">0</span>
                     </div>
-                    <div class="tasks repertory" id="todo-tasks"></div>
+                    <div class="tasks" id="todo-tasks"></div>
                     <button class="add-task-btn" onclick="addNewTaskModal('todo')">
                         <span class="plus-icon">+</span>
                         Add New Task
@@ -54,7 +56,7 @@
                         <h2 class="column-title">🔄 In Progress</h2>
                         <span class="task-count" id="inprogress-count">0</span>
                     </div>
-                    <div class="tasks repertory" id="inprogress-tasks"></div>
+                    <div class="tasks" id="inprogress-tasks"></div>
                     <button class="add-task-btn" onclick="addNewTaskModal('inprogress')">
                         <span class="plus-icon">+</span>
                         Add New Task
@@ -66,7 +68,7 @@
                         <h2 class="column-title">👀 Review</h2>
                         <span class="task-count" id="review-count">0</span>
                     </div>
-                    <div class="tasks repertory" id="review-tasks"></div>
+                    <div class="tasks" id="review-tasks"></div>
                     <button class="add-task-btn" onclick="addNewTaskModal('review')">
                         <span class="plus-icon">+</span>
                         Add New Task
@@ -78,7 +80,7 @@
                         <h2 class="column-title">✅ Done</h2>
                         <span class="task-count" id="done-count">0</span>
                     </div>
-                    <div class="tasks repertory" id="done-tasks"></div>
+                    <div class="tasks" id="done-tasks"></div>
                     <button class="add-task-btn" onclick="addNewTaskModal('done')">
                         <span class="plus-icon">+</span>
                         Add New Task
@@ -103,7 +105,7 @@
         </div>
         <div class="section-limit">
         <section id="newTaskModal" class="modal hide">
-            <div class="tasks">
+            <div class="tasks" id="inprogress-tasks">
                 <div class="innerModal" id="innerModal">
                     <div class="task-title"><input id="titleValue" placeholder="Title" autofocus></div>
                     <div class="task-description"><input id="descriptionValue" placeholder="Description"></div>
@@ -127,7 +129,7 @@
             </div>
         </section>
         <section id="editTaskModal" class="modal hide">
-            <div class="tasks">
+            <div class="tasks" id="inprogress-tasks">
                 <div class="innerModal" id="innerEditModal" data-task-id="">
                     <div class="task-title"><input id="editTitleValue" placeholder="Title" autofocus></div>
                     <div class="task-description"><input id="editDescriptionValue" placeholder="Description"></div>
@@ -150,22 +152,13 @@
                 <button class="btn btn-cancel" id="cancelEdit">Cancel</button>
             </div>
         </section>
-        <section id="newBoardModal" class="modal hide">
-            <div class="tasks">
-                <div class="innerModal" id="innerBoardModal" data-task-id="">
-                    <div class="task-title"><input id="boardTitleValue" placeholder="Title" autofocus></div>
-                </div>
-                <button class="btn btn-submit" id="boardModalSubmit" name="" onclick="boards.newBoardSubmit(this)">Submit</button>
-                <button class="btn btn-cancel" id="cancelNewBoard">Cancel</button>
-            </div>
-        </section>
-    </div>
+        </div>
 
         <div id="modalOverlay" class="overlay hide"></div>
 
-        <script src="js-files/persistence.js"></script>
-        <script src="js-files/tasks.js"></script>
-        <script src="js-files/boards.js"></script>
+        <script src="/js-files/persistence.js"></script>
+        <script src="/js-files/tasks.js"></script>
+        <script src="/js-files/boards.js"></script>
 
 </body>
 </html>
