@@ -31,5 +31,6 @@ persistence = {
             });
             taskArray = tasks;
         }
+        boards.changeBoardTitle();
     }
 }

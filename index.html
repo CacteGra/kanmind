@@ -11,6 +11,7 @@
         <header class="header">
             <div class="header-container">
                 <h1>KanMind</h1>
+                <h2 id="boardName"></h2>
                 <div class="header-content">
                     <div class="main-buttons-div">
                     <button class="main-add add-task-btn" id="addTask" onclick="addNewTaskModal('todo')">
@@ -162,10 +163,11 @@
     </div>
 
         <div id="modalOverlay" class="overlay hide"></div>
-
+        
+        <script src="js-files/boards.js"></script>
         <script src="js-files/persistence.js"></script>
         <script src="js-files/tasks.js"></script>
-        <script src="js-files/boards.js"></script>
+        
 
 </body>
 </html>

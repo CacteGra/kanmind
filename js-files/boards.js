@@ -26,5 +26,10 @@ boards = {
         persistence.saveTasks();
         // Remove previous board tasks from board
         boards.removeElementsByClass("repertory");
+    },
+
+    changeBoardTitle: function() {
+        boardName = document.getElementById("boardName");
+        boardName.innerHTML = boardTitle;
     }
 }
