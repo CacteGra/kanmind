@@ -31,5 +31,20 @@ boards = {
     changeBoardTitle: function() {
         boardName = document.getElementById("boardName");
         boardName.innerHTML = boardTitle;
+    },
+
+    listAllBoards: function() {
+	var listHtml = "";
+    var board;
+	keys = Object.keys(localStorage);
+	console.log(keys);
+	keys = keys.filter(e => e !== 'lastBoard');
+    i = keys.length;
+    console.log(keys);
+	while ( i-- ) {
+        listHtml += `<li>${keys[i]}</li>`;
+	}
+	boardsList = document.getElementById("boardsListing");
+    boardsList.innerHTML = listHtml;
     }
 }
