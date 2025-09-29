@@ -42,9 +42,21 @@ boards = {
     i = keys.length;
     console.log(keys);
 	while ( i-- ) {
-        listHtml += `<li>${keys[i]}</li>`;
+        listHtml += `<li onclick="changeTaskBoard(keys[i])">${keys[i]}</li>`;
 	}
 	boardsList = document.getElementById("boardsListing");
     boardsList.innerHTML = listHtml;
+    },
+
+    changeTaskBoard: function(e) {
+        allTasks = localStorage.getItem(e);
+        tasks = JSON.parse(allTasks);
+        boards.changeBoardTitle(e);
+        tasks.forEach(task => {
+            const taskElement = createTaskElement(task);
+            document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+            ++taskIdCounter;
+        });
+
     }
 }
