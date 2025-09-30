@@ -116,31 +116,57 @@
                 </div>
             </div>
         </div>
-        <div class="section-limit">
-        <section id="newTaskModal" class="modal hide">
-            <div class="tasks">
-                <div class="innerModal" id="innerModal">
-                    <div class="task-title"><input id="titleValue" placeholder="Title" autofocus></div>
-                    <div class="task-description"><input id="descriptionValue" placeholder="Description"></div>
-                    <div class="">
-                        <label class="task-priority" for="priority">Priority:</label><br />
-                        <input type="range" min="0" max="2" id="priorityValue" name="priority" list="values">
-
-                        <datalist id="values">
-                            <option value="0" label="low">low</option>
-                            <option value="1" label="medium">medium</option>
-                            <option value="2" label="high">high</option>
-                        </datalist>
-                    </div>
-                    <div class="task-meta">
-                    <input id="authorValue" placeholder="Author">
-                    </div>
-                    <input id="status" type="hidden" value="">
-                </div>
-                <button class="btn btn-submit" id="modalSubmit" name="" onclick="createBaseTaskElement(this)">Submit</button>
-                <button class="btn btn-cancel" id="cancelAdd">Cancel</button>
+    <!-- Modal for Adding New Tasks -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✨ Add New Task</h3>
+                <button class="modal-close" onclick="closeTaskModal()">&times;</button>
             </div>
-        </section>
+            
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Task Title *</label>
+                    <input type="text" id="taskTitle" class="form-input" required placeholder="Enter task title...">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Description</label>
+                    <textarea id="taskDescription" class="form-textarea" placeholder="Describe the task details..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <div class="priority-options">
+                        <div class="priority-option high" data-priority="high">
+                            🔴 High
+                        </div>
+                        <div class="priority-option medium selected" data-priority="medium">
+                            🟡 Medium
+                        </div>
+                        <div class="priority-option low" data-priority="low">
+                            🟢 Low
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskAssignee">Assignee</label>
+                    <input type="text" id="taskAssignee" class="form-input" placeholder="Enter assignee name...">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        ➕ Add Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+        <div class="section-limit">
         <section id="editTaskModal" class="modal hide">
             <div class="tasks">
                 <div class="innerModal" id="innerEditModal" data-task-id="">

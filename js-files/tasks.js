@@ -198,7 +198,7 @@
                       }
                 })
                 // Update local save
-                persistence.saveTasks(boardTitle)
+                persistence.saveTasks(boardTitle);
             }
         }
 
@@ -222,13 +222,13 @@
             document.getElementById('progress-percent').textContent = progressPercent + '%';
         }
 
-        function addNewTaskModal(status) {
-            document.getElementById("newTaskModal").classList.remove("hide");
-            document.getElementById("modalOverlay").classList.remove("hide");
-            document.getElementById("modalSubmit").name = status;
-            document.getElementById("titleValue").focus();
-            document.getElementById("titleValue").select();
-        }
+        // function addNewTaskModal(status) {
+            // document.getElementById("newTaskModal").classList.remove("hide");
+            // document.getElementById("modalOverlay").classList.remove("hide");
+            // document.getElementById("modalSubmit").name = status;
+            // document.getElementById("titleValue").focus();
+            // document.getElementById("titleValue").select();
+        // }
 
         function editTaskModal(editTaskId) {
             document.getElementById("editTaskModal").classList.remove("hide");
@@ -269,22 +269,124 @@
             `
         }
 
-        function addNewTask(status) {
-            // modal form values
+        function setupPrioritySelection() {
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        function setupModal() {
+            const form = document.getElementById('taskForm');
+            const modal = document.getElementById('taskModal');
+            
+            // Handle form submission
+            form.addEventListener('submit', handleFormSubmit);
+            
+            // Close modal when clicking on the overlay (outside the modal)
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeTaskModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('show')) {
+                    closeTaskModal();
+                }
+            });
+            
+            // Initialize priority selection buttons
+            setupPrioritySelection();
+        }
+
+        function addNewTaskModal(status) {
+            currentTaskStatus = status;
+            openTaskModal();
+        }
+
+        function editTaskModal(editTaskId) {
+            var currentTask = editTaskId.parentNode.parentNode;
+            var currentTaskId = editTaskId.id;
+            var currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
+            var statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
+            currentTaskStatus = statusName.value;
+            openTaskModal();
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            console.log(currentColumn);
+            console.log(currentTaskStatus);
+            console.log(currentTask.querySelector(".task-title"));
+            var currentTitle = currentTask.querySelector(".task-title");
+            var currentDescription = currentTask.querySelector(".task-description");
+            console.log(currentTask.querySelector(".task-priority"));
+            var currentPriority = currentTask.querySelector(".task-priority");
+            var currentAuthor = currentTask.querySelector(".task-assignee");
+            document.getElementById("taskTitle").value = currentTitle.innerText;
+            document.getElementById("taskDescription").value = currentDescription.innerText;
+            document.querySelector('.priority-option[data-priority="'+currentPriority.innerText.toLowerCase()+'"]').classList.add('selected');
+            document.getElementById("taskAssignee").value = currentAuthor.innerText;
+        }
+
+        function openTaskModal() {
+            const modal = document.getElementById('taskModal');
+            const form = document.getElementById('taskForm');
+            
+            // Reset form
+            form.reset();
+            
+            // Reset priority selection
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector('.priority-option[data-priority="medium"]').classList.add('selected');
+            
+            // Show modal with animation
+            modal.classList.add('show');
+            document.getElementById('taskTitle').focus();
+        }
+
+        function closeTaskModal() {
+            const modal = document.getElementById('taskModal');
+            modal.classList.remove('show');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const assignee = document.getElementById('taskAssignee').value.trim() || 'Unassigned';
+            const selectedPriority = document.querySelector('.priority-option.selected');
+            const priority = selectedPriority ? selectedPriority.dataset.priority : 'medium';
+            
+            if (!title) {
+                alert('Please enter a task title');
+                return;
+            }
             
             const newTask = {
                 id: `task-${++taskIdCounter}`,
                 title: title,
                 description: description,
-                priority: priority.toLowerCase(),
+                priority: priority,
                 assignee: assignee,
-                status: status
+                status: currentTaskStatus
             };
             
             const taskElement = createTaskElement(newTask);
-            document.getElementById(`${status}-tasks`).appendChild(taskElement);
+            document.getElementById(`${currentTaskStatus}-tasks`).appendChild(taskElement);
+            // Add to array for local state
+            taskArray.push(newTask);
+            // Saving local state
+            persistence.saveTasks();
             updateTaskCounts();
             updateStats();
+            closeTaskModal();
         }
 
         function deleteTask(deleteId) {
@@ -370,6 +472,7 @@
             setupDropZones();
             updateTaskCounts();
             updateStats();
+            setupModal();
         }
 
         // Start the application
@@ -417,15 +520,15 @@
         };
 
         // Closing modal for the following
-        closeModalBtn.addEventListener("click", closeModal);
-        closeEditModalBtn.addEventListener("click", closeModal);
-        cancelNewBoard.addEventListener("click", closeModal);
-        clickSubmit.addEventListener("click", closeModal);
-        clickEditSubmit.addEventListener("click", closeModal);
-        clickNewBoardSubmit.addEventListener("click", closeModal);
-        overlay.addEventListener("click", closeModal);
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape" && !modal.classList.contains("hide") || e.key === "Escape" && !editModal.classList.contains("hide")) {
-                closeModal();
-            }
-        });
+        // closeModalBtn.addEventListener("click", closeModal);
+        // closeEditModalBtn.addEventListener("click", closeModal);
+        // cancelNewBoard.addEventListener("click", closeModal);
+        // clickSubmit.addEventListener("click", closeModal);
+        // clickEditSubmit.addEventListener("click", closeModal);
+        // clickNewBoardSubmit.addEventListener("click", closeModal);
+        // overlay.addEventListener("click", closeModal);
+        // document.addEventListener("keydown", function (e) {
+        //     if (e.key === "Escape" && !modal.classList.contains("hide") || e.key === "Escape" && !editModal.classList.contains("hide")) {
+        //         closeModal();
+        //     }
+        // });
