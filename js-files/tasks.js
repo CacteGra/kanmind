@@ -303,18 +303,40 @@
             setupPrioritySelection();
         }
 
+        function changeSubmitModal(buttonRole) {
+            const form = document.getElementById('taskForm');
+            form.replaceWith(form.cloneNode(true));
+            replacedForm = document.getElementById('taskForm');
+            if (buttonRole == "Edit Task") {
+                replacedForm.addEventListener('submit', editTask);
+                button = document.getElementById("submitTask");
+                console.log(buttonRole);
+                button.innerText = "➕ " + buttonRole;
+            } else {
+                replacedForm.addEventListener('submit', handleFormSubmit);
+                button = document.getElementById("submitTask");
+                button.innerText = "➕ " + buttonRole;
+            }
+            //form.addEventListener('submit', handleFormSubmit);
+            // Change form submission function
+            // form.addEventListener('submit', handleEditFormSubmit);
+            // form.addEventListener('submit', handleFormSubmit);
+        }
+
         function addNewTaskModal(status) {
             currentTaskStatus = status;
-            openTaskModal();
+            openTaskModal("Add Task");
         }
 
         function editTaskModal(editTaskId) {
+            openTaskModal("Edit Task");
+            var taskId = document.getElementById("taskID");
+            taskId.value = editTaskId.id;
             var currentTask = editTaskId.parentNode.parentNode;
             var currentTaskId = editTaskId.id;
             var currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
             var statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
             currentTaskStatus = statusName.value;
-            openTaskModal();
             document.querySelectorAll('.priority-option').forEach(option => {
                 option.classList.remove('selected');
             });
@@ -332,12 +354,13 @@
             document.getElementById("taskAssignee").value = currentAuthor.innerText;
         }
 
-        function openTaskModal() {
+        function openTaskModal(buttonRole) {
             const modal = document.getElementById('taskModal');
             const form = document.getElementById('taskForm');
             
             // Reset form
             form.reset();
+            changeSubmitModal(buttonRole);
             
             // Reset priority selection
             document.querySelectorAll('.priority-option').forEach(option => {
@@ -406,34 +429,29 @@
             })
         }
 
-        function editTask(taskEdit) {
-            currentTaskId = document.getElementById('taskID');
-            taskId = currentTaskId.value;
-            currentTask = document.querySelector('[data-task-id=' + taskId + ']');
-            console.log(currentTask);
-            title = document.getElementById("editTitleValue");
-            description = document.getElementById("editDescriptionValue");
-            priority = document.getElementById("editPriorityValue");
-            if (priority.value == 0) {
-                priorityLabel = "low"
+        function editTask(e) {
+            e.preventDefault();
+            var taskId = document.getElementById("taskID");
+            currentTask = document.querySelector('[data-task-id=' + taskId.value + ']');
+            console.log(taskId);
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const assignee = document.getElementById('taskAssignee').value.trim() || 'Unassigned';
+            const selectedPriority = document.querySelector('.priority-option.selected');
+            const priority = selectedPriority ? selectedPriority.dataset.priority : 'medium';
+            if (!title) {
+                alert('Please enter a task title');
+                return;
             }
-            else if (priority.value == 1) {
-                priorityLabel = "medium";
-            }
-            else{
-                priorityLabel = "high";
-            }
-            author = document.getElementById("editAuthorValue");
-            statusValue = document.getElementById("editTaskStatus");
-            console.log(statusValue);
             const newTaskEdit = {
-                id: taskId,
-                title: title.value,
-                description: description.value,
-                priority: priorityLabel,
-                assignee: author.value,
-                status: statusValue.value
+                id: taskId.value,
+                title: title,
+                description: description,
+                priority: priority,
+                assignee: assignee,
+                status: currentTaskStatus
             };
+            console.log(newTaskEdit);
             taskArray.forEach(theTask => {
                 arrayTaskId = theTask.id
                 console.log(newTaskEdit.id);
@@ -458,7 +476,8 @@
                         </div>
                     `;
                 }
-            })
+            });
+            closeTaskModal();
         }
 
         // Initialize the board

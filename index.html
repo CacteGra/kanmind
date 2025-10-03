@@ -126,6 +126,7 @@
             
             <form id="taskForm">
                 <div class="form-group">
+                    <input id="taskID" type="hidden" value="">
                     <label class="form-label" for="taskTitle">Task Title *</label>
                     <input type="text" id="taskTitle" class="form-input" required placeholder="Enter task title...">
                 </div>
@@ -159,7 +160,7 @@
                     <button type="button" class="btn btn-secondary" onclick="closeTaskModal()">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submitTask">
                         ➕ Add Task
                     </button>
                 </div>
