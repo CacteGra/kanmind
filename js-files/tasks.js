@@ -56,11 +56,11 @@
             taskDiv.dataset.taskId = task.id;
             
             taskDiv.innerHTML = `
-                <div class="modify-task">
-                    <div class="edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
-                    <div class="delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
-                </div>
-                <div class="task-title">${task.title}
+                <div class="title-buttons">
+                    <div class="task-title">${task.title}</div>
+                    <div class="modify-task edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
+                    <div class="modify-task delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
+                    <div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-meta">
@@ -108,11 +108,11 @@
             taskDiv.dataset.taskId = taskTaskId;
             
             taskDiv.innerHTML = `
-                <div class="modify-task">
-                    <div class="edit-form" id=${taskTaskId} onclick="editTaskModal(this)">📝</div>
-                    <div class="delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
-                </div>
-                <div class="task-title">${title.value}
+                <div class="title-buttons">
+                    <div class="task-title">${title.value}</div>
+                    <div class="modify-task edit-form" id=${taskTaskId} onclick="editTaskModal(this)">📝</div>
+                    <div class="modify-task delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
+                    <div class="modify-task" id=${taskTaskId} onclick="linkTask(this)">🔗</div>
                 </div>
                 <div class="task-description">${description.value}</div>
                 <div class="task-meta">
@@ -463,17 +463,18 @@
                     persistence.saveTasks();
                     // Edit task in HTML
                     currentTask.innerHTML = `
-                        <div class="modify-task">
-                            <div class="edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
-                            <div class="delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
-                        </div>
-                        <div class="task-title">${newTaskEdit.title}
+                        <div class="title-buttons">
+                            <div class="task-title">${newTaskEdit.title}</div>
+                            <div class="modify-task edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
+                            <div class="modify-task delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
+                            <div class="modify-task" id=${newTaskEdit.id} onclick="linkTask(this)">🔗</div>
                         </div>
                         <div class="task-description">${newTaskEdit.description}</div>
                         <div class="task-meta">
                             <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
                             <span class="task-assignee">${newTaskEdit.assignee}</span>
                         </div>
+
                     `;
                 }
             });

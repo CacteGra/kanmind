@@ -102,14 +102,15 @@ h1 {
     z-index: 1000;
 }
 
-.task-title {
+.title-buttons {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 8px;
     font-size: 1.1rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    overflow-wrap: anywhere;
+    /* max-width: 180px; */
 }
 
 .task-description {
@@ -651,18 +652,19 @@ label {
 .modify-task {
     display: flex;
     justify-content: end;
-    margin-bottom: -24px;
     margin-right: -10px;
+    margin-right: 0;
 }
 
 .delete-bin {
     cursor: pointer;
     color: transparent;
     text-shadow: 0 0 0 red;
-    
+    padding-right: 10px;
 }
 
 .edit-form {
     cursor: pointer;
     padding-right: 10px;
+    margin-left: auto;
 }
