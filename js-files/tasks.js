@@ -5,6 +5,8 @@
         persistence.loadTasks();
         console.log(taskIdCounter);
         let draggedElement = null;
+        let linkingMode = false;
+        let taskLinks = {};
 
         // Sample tasks to start with
         // const initialTasks = [
@@ -67,11 +69,13 @@
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                     <span class="task-assignee">${task.assignee}</span>
                 </div>
+                <div class="task-links" id="links-${task.id}"></div>
             `;
 
             // Add drag event listeners
             taskDiv.addEventListener('dragstart', handleDragStart);
             taskDiv.addEventListener('dragend', handleDragEnd);
+            taskDiv.addEventListener('click', handleTaskClick);
 
             return taskDiv;
         }
@@ -119,6 +123,7 @@
                     <span class="task-priority priority-${priorityLabel}">${priorityLabel}</span>
                     <span class="task-assignee">${author.value}</span>
                 </div>
+                <div class="task-links" id="links-${taskTaskId}"></div>
             `;
 
             // Add drag event listeners
@@ -474,11 +479,131 @@
                             <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
                             <span class="task-assignee">${newTaskEdit.assignee}</span>
                         </div>
+                        <div class="task-links" id="links-${newTaskEdit.id}"></div>
 
                     `;
                 }
             });
             closeTaskModal();
+        }
+
+        function handleTaskClick(e) {
+            if (!linkingMode) return;
+            
+            e.stopPropagation();
+            const clickedTask = this;
+            const clickedTaskId = clickedTask.dataset.taskId;
+            // Second click - link to target task
+            const sourceTaskId = linkSourceTask.dataset.taskId;
+            
+            if (sourceTaskId !== clickedTaskId) {
+                // Create link
+                createLink(sourceTaskId, clickedTaskId);
+                linkSourceTask.classList.remove('link-source');
+                linkSourceTask = null;
+                updateLinkModeButton('✅ Linked! Select another task');
+                btn = document.querySelector('.active');
+                btn.classList.remove("active");
+                btn.classList.add("activated");
+                
+                setTimeout(() => {
+                    if (linkingMode) {
+                        updateLinkModeButton('🔗 Select first task');
+                    }
+                }, 2000);
+            }
+        }
+
+        function createLink(sourceId, targetId) {
+            // Initialize arrays if they don't exist
+            if (!taskLinks[sourceId]) {
+                taskLinks[sourceId] = [];
+            }
+            console.log("in createlink");
+            // Add link if it doesn't already exist
+            if (!taskLinks[sourceId].includes(targetId)) {
+                console.log("about to create link");
+                taskLinks[sourceId].push(targetId);
+                updateTaskLinkDisplay(sourceId);
+                updateTaskLinkDisplay(targetId);
+                
+                // Mark tasks as linked
+                document.querySelector(`[data-task-id="${sourceId}"]`).classList.add('linked');
+                document.querySelector(`[data-task-id="${targetId}"]`).classList.add('linked');
+                
+            }
+        }
+
+        function updateTaskLinkDisplay(taskId) {
+            console.log(taskId);
+            const linksContainer = document.getElementById(`links-${taskId}`);
+            if (!linksContainer) return;
+            
+            const linkedTasks = [];
+            
+            // Find tasks this task links to
+            if (taskLinks[taskId]) {
+                linkedTasks.push(...taskLinks[taskId]);
+            }
+            
+            // Find tasks that link to this task
+            for (const [sourceId, targets] of Object.entries(taskLinks)) {
+                if (targets.includes(taskId) && !linkedTasks.includes(sourceId)) {
+                    linkedTasks.push(sourceId);
+                }
+            }
+            console.log("before taskelements");
+            
+            if (linkedTasks.length > 0) {
+                const taskElements = linkedTasks.map(linkedId => {
+                    const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
+                    const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
+                    return `<span class="link-badge" title="${title}">🔗 ${title.substring(0, 15)}${title.length > 15 ? '...' : ''}</span>`;
+                }).join('');
+                console.log("taskelements");
+                console.log(taskElements);
+                linksContainer.innerHTML = taskElements;
+                linksContainer.style.display = 'block';
+            } else {
+                linksContainer.style.display = 'none';
+            }
+        }
+
+        function linkTask(btn) {
+            linkingMode = !linkingMode;
+            const tasks = document.querySelectorAll('.task');
+            linkSourceTask = btn.parentNode.parentNode;
+            linkSourceTask.classList.add('link-source');
+            
+            if (linkingMode) {
+                btn.classList.add('active');
+                btn.innerHTML = '🔗 Select first task';
+                tasks.forEach(task => {
+                    task.classList.add('linking-mode');
+                    task.draggable = false;
+                });
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '🔗 Link Tasks';
+                tasks.forEach(task => {
+                    task.classList.remove('linking-mode', 'link-source');
+                    task.draggable = true;
+                });
+                linkSourceTask = null;
+            }
+        }
+
+        function updateLinkModeButton(text) {
+            btn = document.querySelector('.active');
+            if (btn) {
+                btn.innerHTML = text;
+            } else {
+                btn = document.querySelector('.activated');
+                if (btn){
+                    btn.innerHTML = '🔗';
+                    btn.classList.remove('activated');
+                }
+            }
         }
 
         // Initialize the board

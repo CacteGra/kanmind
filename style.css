@@ -654,17 +654,16 @@ label {
     justify-content: end;
     margin-right: -10px;
     margin-right: 0;
+    cursor: pointer;
 }
 
 .delete-bin {
-    cursor: pointer;
     color: transparent;
     text-shadow: 0 0 0 red;
     padding-right: 10px;
 }
 
 .edit-form {
-    cursor: pointer;
     padding-right: 10px;
     margin-left: auto;
 }
