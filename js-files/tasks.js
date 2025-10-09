@@ -136,7 +136,8 @@
                 description: description.value,
                 priority: priorityLabel,
                 assignee: author.value,
-                status: statusValue
+                status: statusValue,
+                linked: null
             };
             // Add to array for local state
             taskArray.push(newTask);
@@ -403,7 +404,8 @@
                 description: description,
                 priority: priority,
                 assignee: assignee,
-                status: currentTaskStatus
+                status: currentTaskStatus,
+                linked: null
             };
             
             const taskElement = createTaskElement(newTask);
@@ -454,7 +456,8 @@
                 description: description,
                 priority: priority,
                 assignee: assignee,
-                status: currentTaskStatus
+                status: currentTaskStatus,
+                linked: null
             };
             console.log(newTaskEdit);
             taskArray.forEach(theTask => {
@@ -524,6 +527,18 @@
             if (!taskLinks[sourceId].includes(targetId)) {
                 console.log("about to create link");
                 taskLinks[sourceId].push(targetId);
+                taskArray.forEach(theTask => {
+                    indexNumber = taskArray.indexOf(theTask);
+                    arrayTaskId = theTask.id;
+                    if (arrayTaskId === sourceId) {
+                        taskArray[indexNumber].linked = targetId;
+                        console.log(taskArray[indexNumber].linked);
+                    } else if (arrayTaskId === targetId) {
+                        taskArray[indexNumber].linked = sourceId;
+                        console.log(taskArray[indexNumber].linked);
+                    }
+                });
+                persistence.saveTasks();
                 updateTaskLinkDisplay(sourceId);
                 updateTaskLinkDisplay(targetId);
                 

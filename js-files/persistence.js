@@ -28,6 +28,7 @@ persistence = {
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 ++taskIdCounter;
+                console.log(task.linked);
             });
             taskArray = tasks;
         }
