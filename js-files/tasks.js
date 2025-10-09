@@ -502,16 +502,22 @@
             if (sourceTaskId !== clickedTaskId) {
                 // Create link
                 createLink(sourceTaskId, clickedTaskId);
-                linkSourceTask.classList.remove('link-source');
-                linkSourceTask = null;
                 updateLinkModeButton('✅ Linked! Select another task');
+                console.log("removing everything");
                 btn = document.querySelector('.active');
-                btn.classList.remove("active");
+                btn.classList.remove('active');
                 btn.classList.add("activated");
+                const tasks = document.querySelectorAll('.task');
+                tasks.forEach(task => {
+                    task.classList.remove('linking-mode', 'link-source');
+                    task.draggable = true;
+                });
+                linkSourceTask = null;
                 
                 setTimeout(() => {
                     if (linkingMode) {
                         updateLinkModeButton('🔗 Select first task');
+                        linkingMode = !linkingMode;
                     }
                 }, 2000);
             }
@@ -592,19 +598,11 @@
             
             if (linkingMode) {
                 btn.classList.add('active');
-                btn.innerHTML = '🔗 Select first task';
+                btn.innerHTML = '🔗 Select task to link';
                 tasks.forEach(task => {
                     task.classList.add('linking-mode');
                     task.draggable = false;
                 });
-            } else {
-                btn.classList.remove('active');
-                btn.innerHTML = '🔗 Link Tasks';
-                tasks.forEach(task => {
-                    task.classList.remove('linking-mode', 'link-source');
-                    task.draggable = true;
-                });
-                linkSourceTask = null;
             }
         }
 
