@@ -56,7 +56,15 @@
             taskDiv.draggable = true;
             console.log(task.id);
             taskDiv.dataset.taskId = task.id;
-            
+            var linkedTitle = '';
+            console.log(taskArray);
+            taskArray.forEach(theTask => {
+                console.log("taskarraying");
+                if (theTask.id === task.linked) {
+                    linkedTitle = theTask.title;
+                    console.log(linkedTitle);
+                }
+            })
             taskDiv.innerHTML = `
                 <div class="title-buttons">
                     <div class="task-title">${task.title}</div>
@@ -69,7 +77,7 @@
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                     <span class="task-assignee">${task.assignee}</span>
                 </div>
-                <div class="task-links" id="links-${task.id}"></div>
+                <div class="task-links" id="links-${task.linked}">${linkedTitle}</div>
             `;
 
             // Add drag event listeners
@@ -469,6 +477,12 @@
                     taskArray[indexNumber] = newTaskEdit;
                     // Save edited array to local
                     persistence.saveTasks();
+                    var linkedTitle = '';
+                    taskArray.forEach(theTask => {
+                        if (theTask.id === task.linked) {
+                            linkedTitle = theTask.title
+                        }
+                    })
                     // Edit task in HTML
                     currentTask.innerHTML = `
                         <div class="title-buttons">
@@ -482,8 +496,7 @@
                             <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
                             <span class="task-assignee">${newTaskEdit.assignee}</span>
                         </div>
-                        <div class="task-links" id="links-${newTaskEdit.id}"></div>
-
+                        <div class="task-links" id="links-${newTaskEdit.linked}">${linkedTitle}</div>
                     `;
                 }
             });

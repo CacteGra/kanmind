@@ -23,14 +23,13 @@ persistence = {
         const savedTasks = localStorage.getItem(boardTitle);
         
         if (savedTasks) {
-            const tasks = JSON.parse(savedTasks);
-            tasks.forEach(task => {
+            taskArray = JSON.parse(savedTasks);
+            taskArray.forEach(task => {
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 ++taskIdCounter;
                 console.log(task.linked);
             });
-            taskArray = tasks;
         }
         boards.changeBoardTitle();
     },
