@@ -326,6 +326,7 @@
         function changeSubmitModal(buttonRole) {
             const form = document.getElementById('taskForm');
             form.replaceWith(form.cloneNode(true));
+            setupPrioritySelection();
             replacedForm = document.getElementById('taskForm');
             if (buttonRole == "Edit Task") {
                 replacedForm.addEventListener('submit', editTask);
