@@ -63,8 +63,14 @@
                 if (theTask.id === task.linked) {
                     linkedTitle = theTask.title;
                     console.log(linkedTitle);
-                }
-            })
+                };
+            });
+            var linkedTasks;
+            if (linkedTitle) {
+                linkedTasks = `<div class="task-links" id="links-${task.id}" style="display: block;"><span class="linked">🖇</span>${linkedTitle}</div>`;
+            } else {
+                linkedTasks = `<div class="task-links" id="links-${task.id}" style="display: none;"><span class="linked">🖇</span>${linkedTitle}</div>`;
+            };
             taskDiv.innerHTML = `
                 <div class="title-buttons">
                     <div class="task-title">${task.title}</div>
@@ -77,7 +83,7 @@
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                     <span class="task-assignee">${task.assignee}</span>
                 </div>
-                <div class="task-links" id="links-${task.linked}">${linkedTitle}</div>
+                ${linkedTasks}
             `;
 
             // Add drag event listeners
@@ -131,7 +137,7 @@
                     <span class="task-priority priority-${priorityLabel}">${priorityLabel}</span>
                     <span class="task-assignee">${author.value}</span>
                 </div>
-                <div class="task-links" id="links-${taskTaskId}"></div>
+                <div class="task-links" id="links-${taskTaskId}"><span class="linked">🖇</span></div>
             `;
 
             // Add drag event listeners
@@ -145,7 +151,7 @@
                 priority: priorityLabel,
                 assignee: author.value,
                 status: statusValue,
-                linked: null
+                linked: `task-${taskID}`
             };
             // Add to array for local state
             taskArray.push(newTask);
@@ -413,7 +419,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: null
+                linked: `task-${++taskIdCounter}`
             };
             
             const taskElement = createTaskElement(newTask);
@@ -465,7 +471,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: null
+                linked: taskId.value
             };
             console.log(newTaskEdit);
             taskArray.forEach(theTask => {
@@ -478,11 +484,8 @@
                     // Save edited array to local
                     persistence.saveTasks();
                     var linkedTitle = '';
-                    taskArray.forEach(theTask => {
-                        if (theTask.id === task.linked) {
-                            linkedTitle = theTask.title
-                        }
-                    })
+                    linkedTasks = document.getElementById("links-"+arrayTaskId);
+                    console.log(linkedTasks);
                     // Edit task in HTML
                     currentTask.innerHTML = `
                         <div class="title-buttons">
@@ -496,7 +499,7 @@
                             <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
                             <span class="task-assignee">${newTaskEdit.assignee}</span>
                         </div>
-                        <div class="task-links" id="links-${newTaskEdit.linked}">${linkedTitle}</div>
+                        ${linkedTasks.outerHTML}
                     `;
                 }
             });
@@ -586,17 +589,15 @@
                     linkedTasks.push(sourceId);
                 }
             }
-            console.log("before taskelements");
             
             if (linkedTasks.length > 0) {
                 const taskElements = linkedTasks.map(linkedId => {
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
-                    return `<span class="link-badge" title="${title}">🔗 ${title.substring(0, 15)}${title.length > 15 ? '...' : ''}</span>`;
+                    return `<span class="link-badge" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
-                console.log("taskelements");
-                console.log(taskElements);
-                linksContainer.innerHTML = taskElements;
+
+                linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
                 linksContainer.style.display = 'block';
             } else {
                 linksContainer.style.display = 'none';

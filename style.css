@@ -667,3 +667,8 @@ label {
     padding-right: 10px;
     margin-left: auto;
 }
+
+.linked {
+    color: transparent;
+    text-shadow: 0 0 0 rgb(0, 0, 0);
+}
