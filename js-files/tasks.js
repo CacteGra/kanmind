@@ -65,11 +65,14 @@
                     console.log(linkedTitle);
                 };
             });
+            if (linkedTitle) {
+                console.log('EXISTS LINKED TITLE'+task.linked);
+            }
             var linkedTasks;
             if (linkedTitle) {
-                linkedTasks = `<div class="task-links" id="links-${task.id}" style="display: block;"><span class="linked">🖇</span>${linkedTitle}</div>`;
+                linkedTasks = `<div class="task-links" id="links-${task.id}" linkedData="${task.linked}" style="display: block;"><span class="linked">🖇</span>${linkedTitle}</div>`;
             } else {
-                linkedTasks = `<div class="task-links" id="links-${task.id}" style="display: none;"><span class="linked">🖇</span>${linkedTitle}</div>`;
+                linkedTasks = `<div class="task-links" id="links-${task.id}" linkedData="" style="display: none;"><span class="linked">🖇</span></div>`;
             };
             taskDiv.innerHTML = `
                 <div class="title-buttons">
@@ -412,7 +415,7 @@
                 alert('Please enter a task title');
                 return;
             }
-            
+
             const newTask = {
                 id: `task-${++taskIdCounter}`,
                 title: title,
@@ -420,7 +423,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: `task-${++taskIdCounter}`
+                linked: null
             };
             
             const taskElement = createTaskElement(newTask);
@@ -465,6 +468,7 @@
                 alert('Please enter a task title');
                 return;
             }
+            linkedTasks = document.getElementById("links-"+arrayTaskId);
             const newTaskEdit = {
                 id: taskId.value,
                 title: title,
@@ -472,7 +476,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: taskId.value
+                linked: linkedTasks.linkedData
             };
             console.log(newTaskEdit);
             taskArray.forEach(theTask => {
@@ -485,7 +489,6 @@
                     // Save edited array to local
                     persistence.saveTasks();
                     var linkedTitle = '';
-                    linkedTasks = document.getElementById("links-"+arrayTaskId);
                     console.log(linkedTasks);
                     // Edit task in HTML
                     currentTask.innerHTML = `
@@ -593,6 +596,7 @@
             
             if (linkedTasks.length > 0) {
                 const taskElements = linkedTasks.map(linkedId => {
+                    linksContainer.linkedData = linkedId;
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
                     return `<span class="link-badge" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
