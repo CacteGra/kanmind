@@ -66,7 +66,7 @@
                     console.log(task.linked);
                     if (task.linked.includes(theTask.id)) {
                         linkedTitle = theTask.title;
-                        htmlArray.push(`<span class="link-badge" title="${linkedTitle}"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
+                        htmlArray.push(`<span class="link-badge span-${theTask.id}" title="${linkedTitle}"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
                         console.log(linkedTitle);
                     };
                 });
@@ -441,20 +441,29 @@
         }
 
         function deleteTask(deleteId) {
+            var indexNumber;
+            var linkedIndexNumber;
             taskArray.forEach(theTask => {
                 console.log(theTask.id);
+                indexNumber = taskArray.indexOf(theTask);
                 if (theTask.id === deleteId.id) {
                     // Delete task in array
-                    indexNumber = taskArray.indexOf(theTask);
                     taskArray.splice(indexNumber, 1);
-                    // Save new array to local
-                    persistence.saveTasks();
                     // Delete task in HTML by moving up the hierarchy
                     var wholeTask = deleteId.parentNode;
                     wholeTask = wholeTask.parentNode;
                     wholeTask.parentNode.removeChild(wholeTask);
+                } else {
+                    linkedIndexNumber = taskArray.indexOf(deleteId);
+                    theTask.linked.splice(linkedIndexNumber, 1);
+                    const taskInLinks = document.getElementsByClassName(`span-${deleteId}`);
+                    while(taskInLinks.length > 0){
+                        taskInLinks[0].parentNode.removeChild(taskInLinks[0]);
+                    }
                 }
-            })
+            });
+            // Save new array to local
+            persistence.saveTasks();
         }
 
         function editTask(e) {
@@ -513,6 +522,13 @@
                     `;
                 }
             });
+            // Update linked tasks with this new task title
+            const taskInLinks = document.getElementsByClassName(`span-${newTaskEdit.id}`);
+            console.log(taskInLinks);
+            for (let i = 0; i < taskInLinks.length; i++) {
+                taskInLinks[i].setAttribute('title', newTaskEdit.title);
+                taskInLinks[i].textContent = ` ${newTaskEdit.title.substring(0, 15)}${newTaskEdit.title.length > 15 ? '...' : ''},`;
+            };
             closeTaskModal();
         }
 
@@ -606,7 +622,7 @@
                     linksContainer.setAttribute('linked-data', linkedId);
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
-                    return `<span class="link-badge" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                    return `<span class="link-badge span-${linkedId}" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
                 console.log(linkedTasks);
                 taskArray.forEach(theTask => {
