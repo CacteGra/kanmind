@@ -58,21 +58,24 @@
             taskDiv.dataset.taskId = task.id;
             var linkedTitle = '';
             console.log(taskArray);
-            taskArray.forEach(theTask => {
-                console.log("taskarraying");
-                if (theTask.id === task.linked) {
-                    linkedTitle = theTask.title;
-                    console.log(linkedTitle);
-                };
-            });
-            if (linkedTitle) {
-                console.log('EXISTS LINKED TITLE'+task.linked);
-            }
-            var linkedTasks;
-            if (linkedTitle) {
-                linkedTasks = `<div class="task-links" id="links-${task.id}" linkedData="${task.linked}" style="display: block;"><span class="linked">🖇</span>${linkedTitle}</div>`;
+            var htmlArray = [];
+            var taskElements;
+            if (task.linked) {
+                taskArray.forEach(theTask => {
+                    console.log("taskarraying");
+                    console.log(task.linked);
+                    if (task.linked.includes(theTask.id)) {
+                        linkedTitle = theTask.title;
+                        htmlArray.push(`<span class="link-badge" title="${linkedTitle}"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
+                        console.log(linkedTitle);
+                    };
+                });
+            };
+            taskElements = htmlArray.join('');
+            if (task.linked) {
+                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
             } else {
-                linkedTasks = `<div class="task-links" id="links-${task.id}" linkedData="" style="display: none;"><span class="linked">🖇</span></div>`;
+                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked">🖇</span></div>`;
             };
             taskDiv.innerHTML = `
                 <div class="title-buttons">
@@ -86,7 +89,7 @@
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                     <span class="task-assignee">${task.assignee}</span>
                 </div>
-                ${linkedTasks}
+                ${htmlTasks}
             `;
 
             // Add drag event listeners
@@ -468,7 +471,10 @@
                 alert('Please enter a task title');
                 return;
             }
-            linkedTasks = document.getElementById("links-"+arrayTaskId);
+            linkedTasks = document.getElementById("links-"+taskId.value);
+            linkedTasksArray = linkedTasks.getAttribute('linked-data').split(",");
+            console.log(linkedTasks);
+            console.log(linkedTasksArray);
             const newTaskEdit = {
                 id: taskId.value,
                 title: title,
@@ -476,7 +482,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: linkedTasks.linkedData
+                linked: linkedTasksArray
             };
             console.log(newTaskEdit);
             taskArray.forEach(theTask => {
@@ -564,7 +570,6 @@
                         console.log(taskArray[indexNumber].linked);
                     }
                 });
-                persistence.saveTasks();
                 updateTaskLinkDisplay(sourceId);
                 updateTaskLinkDisplay(targetId);
                 
@@ -595,13 +600,24 @@
             }
             
             if (linkedTasks.length > 0) {
+                const linkedArray = [];
                 const taskElements = linkedTasks.map(linkedId => {
-                    linksContainer.linkedData = linkedId;
+                    linkedArray.push(linkedId);
+                    linksContainer.setAttribute('linked-data', linkedId);
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
                     return `<span class="link-badge" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
+                console.log(linkedTasks);
+                taskArray.forEach(theTask => {
+                    console.log("taskarraying");
+                    if (theTask.id === taskId) {
+                    indexNumber = taskArray.indexOf(theTask);
+                    taskArray[indexNumber].linked = linkedArray;
+                    };
+                });
 
+                persistence.saveTasks();
                 linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
                 linksContainer.style.display = 'block';
             } else {
