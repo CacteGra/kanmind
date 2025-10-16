@@ -41,9 +41,16 @@ boards = {
 	keys = keys.filter(e => e !== 'lastBoard');
     i = keys.length;
     console.log(keys);
+    boardName = document.getElementById("boardName");
 	while ( i-- ) {
-        listHtml += `<li onclick="changeTaskBoard(keys[i])">${keys[i]}</li>`;
-	}
+        if (boardName.innerText !== keys[i]) {
+            listHtml += `<li onclick="boards.changeTaskBoard(keys[i])">${keys[i]}</li>`;
+        }
+	};
+    if (listHtml === "") {
+        listHtml = `<li style="color: #acacac;">None.</li>`;
+    };
+    console.log(listHtml);
 	boardsList = document.getElementById("boardsListing");
     boardsList.innerHTML = listHtml;
     },
