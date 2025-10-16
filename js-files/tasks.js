@@ -9,40 +9,40 @@
         let taskLinks = {};
 
         // Sample tasks to start with
-        // const initialTasks = [
-        //     {
-        //         id: 'task-1',
-        //         title: 'Design Landing Page',
-        //         description: 'Create wireframes and mockups for the new product landing page',
-        //         priority: 'high',
-        //         assignee: 'Alice',
-        //         status: 'todo'
-        //     },
-        //     {
-        //         id: 'task-2',
-        //         title: 'API Integration',
-        //         description: 'Connect frontend with the new REST API endpoints',
-        //         priority: 'medium',
-        //         assignee: 'Bob',
-        //         status: 'inprogress'
-        //     },
-        //     {
-        //         id: 'task-3',
-        //         title: 'User Testing',
-        //         description: 'Conduct usability tests with beta users',
-        //         priority: 'low',
-        //         assignee: 'Carol',
-        //         status: 'review'
-        //     },
-        //     {
-        //         id: 'task-4',
-        //         title: 'Database Migration',
-        //         description: 'Migrate user data to new database schema',
-        //         priority: 'high',
-        //         assignee: 'Dave',
-        //         status: 'done'
-        //     }
-        // ];
+        const initialTasks = [
+            {
+                id: 'task-1',
+                title: 'Design Landing Page',
+                description: 'Create wireframes and mockups for the new product landing page',
+                priority: 'high',
+                assignee: 'Alice',
+                status: 'todo'
+            },
+            {
+                id: 'task-2',
+                title: 'API Integration',
+                description: 'Connect frontend with the new REST API endpoints',
+                priority: 'medium',
+                assignee: 'Bob',
+                status: 'inprogress'
+            },
+            {
+                id: 'task-3',
+                title: 'User Testing',
+                description: 'Conduct usability tests with beta users',
+                priority: 'low',
+                assignee: 'Carol',
+                status: 'review'
+            },
+            {
+                id: 'task-4',
+                title: 'Database Migration',
+                description: 'Migrate user data to new database schema',
+                priority: 'high',
+                assignee: 'Dave',
+                status: 'done'
+            }
+        ];
 
         // Create task when loading local state
         function createTaskElement(task) {
@@ -672,11 +672,15 @@
 
         // Initialize the board
         function initializeBoard() {
-            // initialTasks.forEach(task => {
-            //     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
-            //     const taskElement = createTaskElement(task);
-            //     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-            // });
+            console.log(taskArray);
+            if (taskArray.length === 0) {
+                initialTasks.forEach(task => {
+                    taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
+                    const taskElement = createTaskElement(task);
+                    console.log(taskIdCounter);
+                    document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+                });
+            };
             
             setupDropZones();
             updateTaskCounts();
