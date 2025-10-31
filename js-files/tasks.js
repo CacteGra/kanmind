@@ -673,13 +673,25 @@
         // Initialize the board
         function initializeBoard() {
             console.log(taskArray);
+            // Create generic task examples when non exist
             if (taskArray.length === 0) {
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
                     const taskElement = createTaskElement(task);
                     console.log(taskIdCounter);
                     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+                    const newTask = {
+                        id: task.id,
+                        title: task.title,
+                        description: task.description,
+                        priority: task.priority,
+                        assignee: task.assignee,
+                        status: task.status,
+                        linked: null
+                    };
+                    taskArray.push(newTask);
                 });
+                persistence.saveTasks();
             };
             
             setupDropZones();
