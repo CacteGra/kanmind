@@ -29,6 +29,9 @@ persistence = {
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 ++taskIdCounter;
                 console.log(task.linked);
+                if (task.linked) {
+                    taskLinks[task.id] = task.linked;
+                }
             });
         }
         boards.changeBoardTitle();

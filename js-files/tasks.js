@@ -2,11 +2,11 @@
         let taskIdCounter = 0;
         var taskArray = [];
         let boardTitle;
+        let taskLinks = {};
         persistence.loadTasks();
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
-        let taskLinks = {};
 
         // Sample tasks to start with
         const initialTasks = [
