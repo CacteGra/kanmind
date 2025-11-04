@@ -55,6 +55,10 @@ boards = {
     boardsList.innerHTML = listHtml;
     },
 
+    toggleAllBoards: function() {
+        
+    },
+
     changeTaskBoard: function(e) {
         allTasks = localStorage.getItem(e);
         tasks = JSON.parse(allTasks);
