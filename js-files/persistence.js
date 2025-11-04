@@ -1,7 +1,7 @@
 persistence = {
 
     saveTasks: function() {
-        // Save tasks
+        // Save tasks and last board
         console.log(boardTitle);
         localStorage.setItem(boardTitle, JSON.stringify(taskArray));
         localStorage.setItem('lastBoard', JSON.stringify(boardTitle));
@@ -11,6 +11,8 @@ persistence = {
         //localStorage.removeItem('kanMindTasks');
         //localStorage.removeItem('lastBoard');
         //localStorage.clear();
+
+        // Selecting last board if exists
         let lastBoardItem = localStorage.getItem('lastBoard');
         console.log(lastBoardItem);
         if (lastBoardItem == null) {
@@ -22,12 +24,14 @@ persistence = {
         console.log(boardTitle);
         const savedTasks = localStorage.getItem(boardTitle);
         
+        // Building tasks
         if (savedTasks) {
             taskArray = JSON.parse(savedTasks);
             taskArray.forEach(task => {
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 ++taskIdCounter;
+                // Composing array for linked tasks
                 console.log(task.linked);
                 if (task.linked) {
                     taskLinks[task.id] = task.linked;

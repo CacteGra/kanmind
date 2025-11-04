@@ -60,6 +60,7 @@
             console.log(taskArray);
             var htmlArray = [];
             var taskElements;
+            // Adding linked tasks to task
             if (task.linked) {
                 taskArray.forEach(theTask => {
                     console.log("taskarraying");
@@ -617,6 +618,7 @@
             
             if (linkedTasks.length > 0) {
                 const linkedArray = [];
+                // 
                 const taskElements = linkedTasks.map(linkedId => {
                     linkedArray.push(linkedId);
                     linksContainer.setAttribute('linked-data', linkedId);
@@ -625,6 +627,7 @@
                     return `<span class="link-badge span-${linkedId}" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
                 console.log(linkedTasks);
+                // Updating task with new linked task array
                 taskArray.forEach(theTask => {
                     console.log("taskarraying");
                     if (theTask.id === taskId) {
@@ -647,6 +650,7 @@
             linkSourceTask = btn.parentNode.parentNode;
             linkSourceTask.classList.add('link-source');
             
+            // Changing link button
             if (linkingMode) {
                 btn.classList.add('active');
                 btn.innerHTML = '🔗 Select task to link';
