@@ -32,11 +32,23 @@ boards = {
         boardName = document.getElementById("boardName");
         boardName.innerHTML = boardTitle;
     },
+    
+    // Get all boards name
+    getBoards: function() {
+        keys = Object.keys(localStorage);
+        allBoards = keys.filter(e => e !== 'lastBoard');
+    },
+
+    // Get all tasks from board
+    boardTasks: function(boardTitle) {
+        savedTasks = localStorage.getItem(boardTitle);
+        return JSON.parse(savedTasks);
+    },
 
     listAllBoards: function() {
 	var listHtml = "";
     var board;
-	keys = Object.keys(localStorage);
+	keys = boards.getBoards;
 	console.log(keys);
 	keys = keys.filter(e => e !== 'lastBoard');
     i = keys.length;
@@ -53,10 +65,6 @@ boards = {
     console.log(listHtml);
 	boardsList = document.getElementById("boardsListing");
     boardsList.innerHTML = listHtml;
-    },
-
-    toggleAllBoards: function() {
-        
     },
 
     changeTaskBoard: function(e) {

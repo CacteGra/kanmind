@@ -7,6 +7,7 @@
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
+        let allBoards;
 
         // Sample tasks to start with
         const initialTasks = [
@@ -679,6 +680,7 @@
             console.log(taskArray);
             // Create generic task examples when non exist
             if (taskArray.length === 0) {
+                console.log("no tasks");
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
                     const taskElement = createTaskElement(task);
@@ -706,6 +708,9 @@
 
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeBoard);
+        document.addEventListener('DOMContentLoaded', () => {
+            multiview.switchView('dashboard');
+        }),
 
         function checkHidden(element){
           var classAttr = element.attributes['class'];

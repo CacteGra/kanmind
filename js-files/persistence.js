@@ -22,11 +22,11 @@ persistence = {
         }
         boardTitle = JSON.parse(lastBoardItem);
         console.log(boardTitle);
-        const savedTasks = localStorage.getItem(boardTitle);
+        taskArray = boards.boardTasks(boardTitle);
+        console.log(taskArray);
         
         // Building tasks
-        if (savedTasks) {
-            taskArray = JSON.parse(savedTasks);
+        if (taskArray) {
             taskArray.forEach(task => {
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
@@ -35,9 +35,10 @@ persistence = {
                 console.log(task.linked);
                 if (task.linked) {
                     taskLinks[task.id] = task.linked;
-                }
+                };
             });
-        }
+        };
+        console.log("ending building");
         boards.changeBoardTitle();
     },
     
