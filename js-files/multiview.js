@@ -45,7 +45,7 @@ multiview = {
             const doneTasks = board.filter(t => t.status === 'done').length;
 
             const card = document.createElement('div');
-            card.className = 'column';
+            card.className = 'column board-column';
             card.onclick = () => multiview.openBoard(board.id);
             
             let taskPreviewHTML;
