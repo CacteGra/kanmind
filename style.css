@@ -34,7 +34,6 @@ body {
 h1 {
     text-align: left;
     color: white;
-    margin-bottom: 30px;
     font-size: 2.5rem;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
@@ -621,8 +620,16 @@ input[type="range"] {
     box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
+.header-content {
+  display: block ruby;
+  text-align: right;
+}
+
 .main-buttons-div {
-    display: inline-flex;
+text-align: center;
+  display: block ruby;
+  margin-top: -73px;
+  padding-bottom: 20px;
 }
 
 .header-container {
@@ -631,10 +638,13 @@ input[type="range"] {
     max-width: 75%;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 30px;
 }
 
 .board-elements {
     margin: auto;
+    display: block ruby;
+    text-align: center;
 }
 
 .board-title-area {
@@ -735,6 +745,7 @@ label {
 
 .main-add {
   border: 2px solid rgba(255, 255, 255, 0.3);
+  max-width: 120px;
 }
 
 .buttons-div {
