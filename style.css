@@ -656,6 +656,7 @@ text-align: center;
 
 #boardName {
     color: white;
+    font-size: 2.5rem;
 }
 
 .main-list-board, ul.submenu {
