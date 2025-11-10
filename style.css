@@ -841,10 +841,11 @@ label {
 }
 
 .main-add-board:checked~ul.submenu {
-  display: block;
-  position: absolute;
-  margin-top: 55px;
-  margin-left: 60px;
+  display: flex;
+  position: relative;
+  /* margin-top: 55px; */
+  margin-left: auto;
+  margin-right: 0px;
   padding: 10px 5px;
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
