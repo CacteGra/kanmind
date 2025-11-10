@@ -710,6 +710,7 @@
         document.addEventListener('DOMContentLoaded', initializeBoard);
         document.addEventListener('DOMContentLoaded', () => {
             multiview.switchView('dashboard');
+            currentBoardId = boardTitle;
         }),
 
         function checkHidden(element){

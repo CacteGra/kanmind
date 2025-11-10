@@ -18,8 +18,8 @@ multiview = {
                 multiview.renderDashboard();
             } else if (viewName === 'kanbanView') {
                 document.getElementById('kanbanView').classList.add('active');
-                const board = allBoards.find(b => b.id === currentBoardId);
-                document.getElementById('navTitle').textContent = `${board.icon} ${board.name}`;
+                const board = currentBoardId;
+                console.log(allBoards);
                 multiview.renderKanbanBoard(currentBoardId);
             }
         },
@@ -30,23 +30,22 @@ multiview = {
             grid.innerHTML = '';
             
             allBoards.forEach(board => {
-                console.log(board);
-                thisBoard = boards.boardTasks(board);
-                console.log(thisBoard);
-                const card = multiview.createBoardCard(thisBoard);
+                const card = multiview.createBoardCard(board);
                 grid.appendChild(card);
             });
         },
 
-        createBoardCard: function(board) {
-            const latestTask = multiview.getLatestTask(board.tasks);
+        createBoardCard: function(thisBoard) {
+            board = boards.boardTasks(thisBoard);
+            console.log(board);
+            const latestTask = multiview.getLatestTask(boards.boardTasks(thisBoard));
             const totalTasks = board.length;
             console.log(typeof(board));
             const doneTasks = board.filter(t => t.status === 'done').length;
 
             const card = document.createElement('div');
             card.className = 'column board-column';
-            card.onclick = () => multiview.openBoard(board.id);
+            card.onclick = () => multiview.openBoard(thisBoard);
             
             let taskPreviewHTML;
             if (latestTask) {
@@ -65,8 +64,7 @@ multiview = {
 
             card.innerHTML = `
                 <div class="board-header">
-                    <div class="board-icon">${board.icon}</div>
-                    <div class="board-title">${board.name}</div>
+                    <div class="board-title">${thisBoard}</div>
                 </div>
                 
                 <div class="board-stats">
@@ -90,29 +88,12 @@ multiview = {
 
         openBoard: function(boardId) {
             currentBoardId = boardId;
-            multiview.switchView('kanban');
+            console.log(currentBoardId);
+            multiview.switchView('kanbanView');
         },
 
         // KANBAN BOARD RENDERING
         renderKanbanBoard: function(boardId) {
-            const board = allBoards.find(b => b.id === boardId);
-            if (!board) return;
-
-            // Update title
-            document.getElementById('currentBoardTitle').textContent = `${board.icon} ${board.name}`;
-
-            // Clear all columns
-            ['todo', 'inprogress', 'review', 'done'].forEach(status => {
-                document.getElementById(`${status}-tasks`).innerHTML = '';
-            });
-
-            // Render tasks
-            board.tasks.forEach(task => {
-                const taskElement = createTaskElement(task);
-                document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-            });
-
-            updateTaskCounts();
-            setupDragAndDrop();
+            boards.changeTaskBoard(boardId);
         },
 }

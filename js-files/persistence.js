@@ -26,18 +26,18 @@ persistence = {
         console.log(taskArray);
         
         // Building tasks
-        if (taskArray) {
-            taskArray.forEach(task => {
-                const taskElement = createTaskElement(task);
-                document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-                ++taskIdCounter;
-                // Composing array for linked tasks
-                console.log(task.linked);
-                if (task.linked) {
-                    taskLinks[task.id] = task.linked;
-                };
-            });
-        };
+        // if (taskArray) {
+        //     taskArray.forEach(task => {
+        //         const taskElement = createTaskElement(task);
+        //         document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+        //         ++taskIdCounter;
+        //         // Composing array for linked tasks
+        //         console.log(task.linked);
+        //         if (task.linked) {
+        //             taskLinks[task.id] = task.linked;
+        //         };
+        //     });
+        // };
         console.log("ending building");
         boards.changeBoardTitle();
     },
