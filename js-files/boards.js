@@ -86,6 +86,10 @@ boards = {
         allTasks = localStorage.getItem(e);
         tasks = JSON.parse(allTasks);
         boards.changeBoardTitle(e);
+        allStatuses = document.getElementsByClassName("tasks repertory");
+        for (allStatus of allStatuses) {
+            allStatus.innerHTML = "";
+        }
         tasks.forEach(task => {
             const taskElement = createTaskElement(task);
             document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
