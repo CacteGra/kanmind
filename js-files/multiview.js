@@ -79,6 +79,8 @@ multiview = {
         },
 
         getLatestTask: function(tasks) {
+            // Exclude done tasks
+            tasks = tasks.filter(t => t.status !== 'done');
             if (!tasks || tasks.length === 0) return null;
             // Using timestamp
             // return tasks.sort((a, b) => b.timestamp - a.timestamp)[0];
