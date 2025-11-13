@@ -1,6 +1,6 @@
 persistence = {
 
-    saveTasks: function(boardTitle) {
+    saveTasks: function() {
         // Save tasks and last board
         localStorage.setItem(boardTitle, JSON.stringify(taskArray));
         localStorage.setItem('lastBoard', boardTitle);
