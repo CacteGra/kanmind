@@ -548,8 +548,8 @@
                 createLink(sourceTaskId, clickedTaskId);
                 updateLinkModeButton('✅ Linked! Select another task');
                 console.log("removing everything");
-                btn = document.querySelector('.active');
-                btn.classList.remove('active');
+                btn = document.querySelector('.activating');
+                btn.classList.remove('activating');
                 btn.classList.add("activated");
                 const tasks = document.querySelectorAll('.task');
                 tasks.forEach(task => {
@@ -653,7 +653,7 @@
             
             // Changing link button
             if (linkingMode) {
-                btn.classList.add('active');
+                btn.classList.add('activating');
                 btn.innerHTML = '🔗 Select task to link';
                 tasks.forEach(task => {
                     task.classList.add('linking-mode');
@@ -663,7 +663,7 @@
         }
 
         function updateLinkModeButton(text) {
-            btn = document.querySelector('.active');
+            btn = document.querySelector('.activating');
             if (btn) {
                 btn.innerHTML = text;
             } else {
