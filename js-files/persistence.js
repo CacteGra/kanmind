@@ -1,45 +1,42 @@
 persistence = {
 
-    saveTasks: function() {
+    saveTasks: function(boardTitle) {
         // Save tasks and last board
-        console.log(boardTitle);
         localStorage.setItem(boardTitle, JSON.stringify(taskArray));
         localStorage.setItem('lastBoard', JSON.stringify(boardTitle));
     },
 
-    loadTasks: function() {
-        //localStorage.removeItem('kanMindTasks');
-        //localStorage.removeItem('lastBoard');
-        //localStorage.clear();
-
-        // Selecting last board if exists
+    // Selecting last board if exists
+    loadLastBoard: function() {
+        // localStorage.clear();
         let lastBoardItem = localStorage.getItem('lastBoard');
-        console.log(lastBoardItem);
         if (lastBoardItem == null) {
             var kanMindBoard = "KanMindTasks";
             localStorage.setItem('lastBoard', JSON.stringify(kanMindBoard));
             lastBoardItem = localStorage.getItem('lastBoard');
         }
-        boardTitle = JSON.parse(lastBoardItem);
-        console.log(boardTitle);
-        taskArray = boards.boardTasks(boardTitle);
-        console.log(taskArray);
-        
+        boardTitle = lastBoardItem;
+    },
+
+    loadTasks: function(e) {
+        //localStorage.removeItem('kanMindTasks');
+        //localStorage.removeItem('lastBoard');
+
+        tempTaskArray = boards.boardTasks(boardTitle);
         // Building tasks
-        // if (taskArray) {
-        //     taskArray.forEach(task => {
-        //         const taskElement = createTaskElement(task);
-        //         document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-        //         ++taskIdCounter;
-        //         // Composing array for linked tasks
-        //         console.log(task.linked);
-        //         if (task.linked) {
-        //             taskLinks[task.id] = task.linked;
-        //         };
-        //     });
-        // };
-        console.log("ending building");
-        boards.changeBoardTitle();
+        if (tempTaskArray) {
+            tempTaskArray.forEach(task => {
+                const taskElement = createTaskElement(task);
+                document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+                ++taskIdCounter;
+                // Composing array for linked tasks
+                if (task.linked) {
+                    taskLinks[task.id] = task.linked;
+                };
+            });
+            taskArray = tempTaskArray;
+        };
+        boards.changeBoardTitle(e);
     },
     
     getAllStorage: function() {

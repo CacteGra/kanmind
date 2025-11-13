@@ -3,7 +3,6 @@
         var taskArray = [];
         let boardTitle;
         let taskLinks = {};
-        persistence.loadTasks();
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
@@ -677,10 +676,10 @@
 
         // Initialize the board
         function initializeBoard() {
-            console.log(taskArray);
+            persistence.loadLastBoard();
+            persistence.loadTasks(boardTitle);
             // Create generic task examples when non exist
             if (taskArray.length === 0) {
-                console.log("no tasks");
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
                     const taskElement = createTaskElement(task);
@@ -697,7 +696,7 @@
                     };
                     taskArray.push(newTask);
                 });
-                persistence.saveTasks();
+                persistence.saveTasks(boardTitle);
             };
             
             setupDropZones();
@@ -710,7 +709,6 @@
         document.addEventListener('DOMContentLoaded', initializeBoard);
         document.addEventListener('DOMContentLoaded', () => {
             multiview.switchView('dashboard');
-            currentBoardId = boardTitle;
         }),
 
         function checkHidden(element){

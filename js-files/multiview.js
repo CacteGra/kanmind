@@ -18,9 +18,9 @@ multiview = {
                 multiview.renderDashboard();
             } else if (viewName === 'kanbanView') {
                 document.getElementById('kanbanView').classList.add('active');
-                const board = currentBoardId;
+                const board = boardTitle;
                 console.log(allBoards);
-                multiview.renderKanbanBoard(currentBoardId);
+                multiview.renderKanbanBoard(boardTitle);
             }
         },
 
@@ -89,8 +89,8 @@ multiview = {
         },
 
         openBoard: function(boardId) {
-            currentBoardId = boardId;
-            console.log(currentBoardId);
+            boardTitle = boardId;
+            console.log(boardTitle);
             multiview.switchView('kanbanView');
         },
 

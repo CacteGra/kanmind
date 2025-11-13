@@ -70,7 +70,7 @@ boards = {
             boardName = document.getElementById("boardName");
             while ( i-- ) {
                 if (boardName.innerText !== keys[i]) {
-                    listHtml += `<li onclick="boards.changeTaskBoard(keys[i])">${keys[i]}</li>`;
+                    listHtml += `<li onclick="persistence.loadTasks(keys[i])">${keys[i]}</li>`;
                 }
             };
         }
@@ -85,16 +85,13 @@ boards = {
     changeTaskBoard: function(e) {
         allTasks = localStorage.getItem(e);
         tasks = JSON.parse(allTasks);
+        taskArray = tasks;
         boards.changeBoardTitle(e);
         allStatuses = document.getElementsByClassName("tasks repertory");
         for (allStatus of allStatuses) {
             allStatus.innerHTML = "";
         }
-        tasks.forEach(task => {
-            const taskElement = createTaskElement(task);
-            document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
-            ++taskIdCounter;
-        });
+        persistence.loadTasks(e);
 
     }
 }
