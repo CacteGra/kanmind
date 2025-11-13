@@ -3,7 +3,7 @@ persistence = {
     saveTasks: function(boardTitle) {
         // Save tasks and last board
         localStorage.setItem(boardTitle, JSON.stringify(taskArray));
-        localStorage.setItem('lastBoard', JSON.stringify(boardTitle));
+        localStorage.setItem('lastBoard', boardTitle);
     },
 
     // Selecting last board if exists
