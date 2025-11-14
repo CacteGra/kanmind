@@ -679,7 +679,7 @@
             persistence.loadLastBoard();
             persistence.loadTasks(boardTitle);
             // Create generic task examples when non exist
-            if (taskArray.length === 0) {
+            if (taskArray.length === 0 && boardTitle === "KanMindTasks") {
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
                     const taskElement = createTaskElement(task);
