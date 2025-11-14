@@ -703,6 +703,7 @@
             updateTaskCounts();
             updateStats();
             setupModal();
+            boards.setupBoardModal();
         }
 
         // Start the application

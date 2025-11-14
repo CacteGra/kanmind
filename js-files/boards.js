@@ -24,16 +24,74 @@ boards = {
         document.getElementById("modalOverlay").classList.remove("hide");
     },
 
-    createBoard: function() {
+
+    openBoardModal: function() {
+      console.log("open board modal");
         // Show modal for new board title
-        document.getElementById("newBoardModal").classList.remove("hide");
-        document.getElementById("modalOverlay").classList.remove("hide");
-        document.getElementById("boardTitleValue").focus();
-        document.getElementById("boardTitleValue").select();
+        const modal = document.getElementById('boardModal');
+        const overlay = document.querySelector(".overlay");
+        overlay.classList.add("hide");
+        const form = document.getElementById('boardForm');
+        
+        // Reset form
+        form.reset();
+                    
+        // Show modal with animation
+        modal.classList.add('show');
+        document.getElementById('boardTitle').focus();
     },
 
-    newBoardSubmit: function(submitButton) {
-        boardTitle = submitButton.parentNode.querySelector("#boardTitleValue").value;
+    closeBoardModal: function() {
+        const modal = document.getElementById('boardModal');
+        modal.classList.remove('show');
+    },
+
+    handleBoardFormSubmit: function() {
+        e.preventDefault();
+        
+        const title = document.getElementById('boardTitle').value.trim();
+        
+        if (!title) {
+            alert('Please enter a task title');
+            return;
+        }
+
+        boardTitle = title;
+        
+        taskArray = [];
+        persistence.saveTasks();
+        boards.newBoardSubmit();
+        updateTaskCounts();
+        updateStats();
+        boards.closeBoardModal();
+    },
+
+    setupBoardModal: function() {
+        const form = document.getElementById('boardForm');
+        const modal = document.getElementById('boardModal');
+        
+        // Handle form submission
+        form.addEventListener('submit', boards.handleBoardFormSubmit);
+        
+        // Close modal when clicking on the overlay (outside the modal)
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                boards.closeBoardModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                boards.closeBoardModal();
+            }
+        });
+        
+        // Initialize priority selection buttons
+        setupPrioritySelection();
+    },
+
+    newBoardSubmit: function(boardTitle) {
         // Save new board to local storage
         taskArray = [];
         persistence.saveTasks();

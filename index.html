@@ -102,7 +102,7 @@
                             </svg>
 
                             </label>
-                        <ul class="submenu" onclick="boards.createBoard()">
+                        <ul class="submenu" onclick="boards.openBoardModal()">
                             Add board
                         </ul>
                     </div>
@@ -220,6 +220,29 @@
                             </button>
                             <button type="submit" class="btn btn-primary" id="submitTask">
                                 ➕ Add Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-overlay" id="boardModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">✨ Add New Board</h3>
+                        <button class="modal-close" onclick="boards.closeBoardModal()">&times;</button>
+                    </div>
+                    <form id="boardForm">
+                        <div class="form-group">
+                            <label class="form-label" for="boardTitle">Board Title *</label>
+                            <input type="text" id="boardTitle" class="form-input" required placeholder="Enter board title...">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="boards.closeBoardModal()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBoard">
+                                ➕ Add Board
                             </button>
                         </div>
                     </form>
