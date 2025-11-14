@@ -48,7 +48,7 @@ boards = {
         checkbox.checked = false;
     },
 
-    handleBoardFormSubmit: function() {
+    handleBoardFormSubmit: function(e) {
         e.preventDefault();
         
         const title = document.getElementById('boardTitle').value.trim();
@@ -59,6 +59,7 @@ boards = {
         }
 
         boardTitle = title;
+        boards.changeBoardTitle();
         
         taskArray = [];
         persistence.saveTasks();
