@@ -12,7 +12,7 @@ persistence = {
         let lastBoardItem = localStorage.getItem('lastBoard');
         if (lastBoardItem == null) {
             var kanMindBoard = "KanMindTasks";
-            localStorage.setItem('lastBoard', JSON.stringify(kanMindBoard));
+            localStorage.setItem('lastBoard', kanMindBoard);
             lastBoardItem = localStorage.getItem('lastBoard');
         }
         boardTitle = lastBoardItem;
