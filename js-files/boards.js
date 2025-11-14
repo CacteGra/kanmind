@@ -44,6 +44,8 @@ boards = {
     closeBoardModal: function() {
         const modal = document.getElementById('boardModal');
         modal.classList.remove('show');
+        var checkbox = document.getElementById("check01");
+        checkbox.checked = false;
     },
 
     handleBoardFormSubmit: function() {
