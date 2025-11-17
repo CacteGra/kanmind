@@ -38,6 +38,27 @@ h1 {
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
+.linking-reminder {
+    display: none;
+    position: relative; 
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: 0; 
+    width: 250px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.try-link {
+    position: absolute;
+}
+
+/* .select-link {
+    position: ;
+} */
+
 .board {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -743,6 +764,14 @@ text-align: center;
 }
 
 .header-container {
+    justify-content: left;
+    align-items: center;
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.second-header-container {
     justify-content: left;
     align-items: center;
     max-width: 75%;

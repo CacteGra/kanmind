@@ -8,10 +8,18 @@
     </head>
 
     <body>
+        <div class="header-container">
+            <h1>KanMind</h1>
+            <div class="linking-reminder">
+                <div class="try-link">
+                <div class="select-link">🔗 Select task to link</div>
+                <div class="cancel-link" onclick="editTaskModal(this)">❌</div>
+                </div>
+            </div>
+        </div>
         <!-- Dashboard View -->
         <div id="dashboardView" class="view active">
-            <div class="header-container">
-                <h1>KanMind</h1>
+            <div class="second-header-container">
                 <div class="board-elements">
                     <div class="board-title-area">
                         <h1>🎯 All Your Boards</h1>
@@ -46,8 +54,7 @@
         </div>
         <!-- Kanban Board View -->
         <div id="kanbanView" class="view">
-            <div class="header-container">
-                <h1>KanMind</h1>
+            <div class="second-header-container">
                 <div class="board-elements">
                     <div class="board-title-area">
                         <h2 id="boardName"></h2>
