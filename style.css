@@ -55,9 +55,9 @@ h1 {
     position: absolute;
 }
 
-/* .select-link {
-    position: ;
-} */
+.cancel-link {
+    cursor: pointer;
+}
 
 .board {
     display: grid;
