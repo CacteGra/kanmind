@@ -533,6 +533,25 @@
             closeTaskModal();
         }
 
+        function cancelLink() {
+            linkingReminder = document.querySelector(".linking-reminder");
+            linkingReminder.style.display = 'none';
+            updateLinkModeButton("Linking canceled");
+            btn = document.querySelector('.activating');
+            btn.classList.remove('activating');
+            btn.classList.add("activated");
+            const tasks = document.querySelectorAll('.task');
+            tasks.forEach(task => {
+                task.classList.remove('linking-mode', 'link-source');
+                task.draggable = true;
+            });
+            linkSourceTask = null;
+                 setTimeout(() => {
+                  updateLinkModeButton('🔗');
+                        linkingMode = !linkingMode;
+                }, 2000);
+        }
+
         function handleTaskClick(e) {
             if (!linkingMode) return;
             
@@ -593,6 +612,9 @@
                 // Mark tasks as linked
                 document.querySelector(`[data-task-id="${sourceId}"]`).classList.add('linked');
                 document.querySelector(`[data-task-id="${targetId}"]`).classList.add('linked');
+
+                linkingReminder = document.querySelector(".linking-reminder");
+                linkingReminder.style.display = 'none';
                 
             }
         }
@@ -652,6 +674,8 @@
             
             // Changing link button
             if (linkingMode) {
+                linkingReminder = document.querySelector(".linking-reminder");
+                linkingReminder.style.display = 'block';
                 btn.classList.add('activating');
                 btn.innerHTML = '🔗 Select task to link';
                 tasks.forEach(task => {

@@ -8,7 +8,7 @@ persistence = {
 
     // Selecting last board if exists
     loadLastBoard: function() {
-        // localStorage.clear();
+        //localStorage.clear();
         let lastBoardItem = localStorage.getItem('lastBoard');
         if (lastBoardItem == null) {
             var kanMindBoard = "KanMindTasks";
