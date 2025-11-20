@@ -10,12 +10,6 @@
     <body>
         <div class="header-container">
             <h1>KanMind</h1>
-            <div class="linking-reminder">
-                <div class="try-link">
-                <div class="select-link">🔗 Select task to link</div>
-                <div class="cancel-link" onclick="cancelLink(this)">❌</div>
-                </div>
-            </div>
         </div>
         <!-- Dashboard View -->
         <div id="dashboardView" class="view active">
@@ -26,9 +20,7 @@
                         <div class="toggle-tables" onclick="multiview.switchView('kanbanView')">
                             <?xml version="1.0" encoding="UTF-8"?>
                             <svg class="shadow-svg" width="28px" height="29px" viewBox="0 0 19 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
                                 <title>table_chart</title>
-                                <desc>Created with Sketch.</desc>
                                 <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                     <g id="Outlined" transform="translate(-375.000000, -2105.000000)">
                                         <g id="Editor" transform="translate(100.000000, 1960.000000)">
@@ -45,6 +37,12 @@
                         </div>
                     </div>
                 </div>
+                            <div class="linking-reminder">
+                <div class="try-link">
+                <div class="select-link">🔗 Select task to link</div>
+                <div class="cancel-link" onclick="cancelLink(this)">❌</div>
+                </div>
+            </div>
             </div>
             <div class="kanban-container">
                 <div class="board" id="boardsGrid">
