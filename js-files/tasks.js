@@ -6,6 +6,7 @@
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
+        let hideCancelLink = "cancel-link-hidden";
         let allBoards;
 
         // Sample tasks to start with
@@ -84,6 +85,7 @@
                     <div class="modify-task edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
                     <div class="modify-task delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
                     <div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>
+                    <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                 </div>
                 <div class="task-description">${task.description}</div>
                 <div class="task-meta">
@@ -138,6 +140,7 @@
                     <div class="modify-task edit-form" id=${taskTaskId} onclick="editTaskModal(this)">📝</div>
                     <div class="modify-task delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
                     <div class="modify-task" id=${taskTaskId} onclick="linkTask(this)">🔗</div>
+                    <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                 </div>
                 <div class="task-description">${description.value}</div>
                 <div class="task-meta">
@@ -513,6 +516,7 @@
                             <div class="modify-task edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
                             <div class="modify-task delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
                             <div class="modify-task" id=${newTaskEdit.id} onclick="linkTask(this)">🔗</div>
+                            <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                         </div>
                         <div class="task-description">${newTaskEdit.description}</div>
                         <div class="task-meta">
@@ -546,13 +550,23 @@
                 task.draggable = true;
             });
             linkSourceTask = null;
-                 setTimeout(() => {
-                  updateLinkModeButton('🔗');
-                        linkingMode = !linkingMode;
+                setTimeout(() => {
+                    updateLinkModeButton('🔗');
+                    linkingMode = !linkingMode;
+                    var cancelButtons = document.querySelectorAll("."+hideCancelLink);
+                    var oldHideCancelLink = hideCancelLink;
+                    hideCancelLink = "cancel-link-hidden";
+                    cancelButtons.forEach(element => {
+                        element.classList.remove(oldHideCancelLink);
+                        element.classList.add(hideCancelLink);
+                    });
                 }, 2000);
         }
 
         function handleTaskClick(e) {
+            if (e.target.innerHTML == "❌") {
+                return;
+            };
             if (!linkingMode) return;
             
             e.stopPropagation();
@@ -581,6 +595,13 @@
                         updateLinkModeButton('🔗 Select first task');
                         linkingMode = !linkingMode;
                     }
+                    var cancelButtons = document.querySelectorAll("."+hideCancelLink);
+                    var oldHideCancelLink = hideCancelLink;
+                    hideCancelLink = "cancel-link-hidden";
+                    cancelButtons.forEach(element => {
+                        element.classList.remove(oldHideCancelLink);
+                        element.classList.add(hideCancelLink);
+                    });
                 }, 2000);
             }
         }
@@ -681,6 +702,13 @@
                 tasks.forEach(task => {
                     task.classList.add('linking-mode');
                     task.draggable = false;
+                });
+                var cancelButtons = document.querySelectorAll("."+hideCancelLink);
+                var oldHideCancelLink = hideCancelLink;
+                hideCancelLink = "cancel-link";
+                cancelButtons.forEach(element => {
+                    element.classList.remove(oldHideCancelLink);
+                    element.classList.add(hideCancelLink);
                 });
             }
         }

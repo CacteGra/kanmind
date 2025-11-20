@@ -917,6 +917,14 @@ label {
     padding-right: 10px;
 }
 
+.cancel-link-hidden {
+    display: none;
+}
+
+.cancel-link {
+    display: block;
+}
+
 .edit-form {
     padding-right: 10px;
     margin-left: auto;
