@@ -764,11 +764,21 @@ text-align: center;
 }
 
 .header-container {
+    display: flex;
     justify-content: left;
     align-items: center;
     max-width: 75%;
     margin-left: auto;
     margin-right: auto;
+}
+
+.toggle-tables {
+    margin-left: auto;
+    margin-right: 200px;
+    padding-top: 10px;
+    padding-left: 20px;
+    vertical-align: sub;
+    cursor: pointer;
 }
 
 .second-header-container {
@@ -827,13 +837,6 @@ label {
 
 .main-list-board, li {
     margin: 5px;
-}
-
-.toggle-tables {
-    padding-top: 10px;
-    padding-left: 20px;
-    vertical-align: sub;
-    cursor: pointer;
 }
 
 .shadow-svg {
