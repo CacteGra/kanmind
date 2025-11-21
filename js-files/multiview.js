@@ -1,6 +1,7 @@
 multiview = {
         // VIEW SWITCHING LOGIC
-        switchView: function(viewName) {
+        switchView: function(viewNameButton) {
+            var viewName = viewNameButton.id;
             boards.getBoards();
             // Hide all views
             document.querySelectorAll('.view').forEach(view => {
@@ -15,9 +16,12 @@ multiview = {
             // Show selected view
             if (viewName === 'dashboard') {
                 document.getElementById('dashboardView').classList.add('active');
+                viewNameButton.id = "kanban";
                 multiview.renderDashboard();
-            } else if (viewName === 'kanbanView') {
+            } else if (viewName === 'kanban') {
                 document.getElementById('kanbanView').classList.add('active');
+                console.log(document.getElementById('kanbanView').classList);
+                viewNameButton.id = "dashboard";
                 const board = boardTitle;
                 console.log(allBoards);
                 multiview.renderKanbanBoard(boardTitle);
@@ -91,7 +95,9 @@ multiview = {
         openBoard: function(boardId) {
             boardTitle = boardId;
             console.log(boardTitle);
-            multiview.switchView('kanbanView');
+            viewNameButton = document.getElementsByClassName("toggle-tables")[0];
+            viewNameButton.id = "kanban";
+            multiview.switchView(viewNameButton);
         },
 
         // KANBAN BOARD RENDERING
