@@ -39,6 +39,41 @@ multiview = {
             });
         },
 
+        heatColor: function(count) {
+            if (count === 0) return "#1E293B";   // deep slate (empty)
+            if (count <= 1) return "#0E4429";    // light green
+            if (count <= 3) return "#006D32";    // medium green
+            if (count <= 6) return "#26A641";    // bright green
+            return "#39D353";                    // neon green
+        },
+
+
+        generateGitHubHeatmap: function(board) {
+            const days = 30;
+            const today = new Date();
+            const counts = new Array(days).fill(0);
+            console.log(board);
+            board
+                .filter(t => t.status === 'done')
+                .forEach(t => {
+                    const delta = Math.floor((today - t.timestamp) / (1000 * 60 * 60 * 24));
+                    if (delta >= 0 && delta < days) {
+                        counts[delta] += 1;
+                    }
+                });
+
+            let html = `<div class="gh-heatmap">`;
+
+            for (let i = days - 1; i >= 0; i--) {
+                const count = counts[i];
+                html += `<div class="gh-cell" style="background:${multiview.heatColor(count)}"></div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        },
+
+
         createBoardCard: function(thisBoard) {
             board = boards.boardTasks(thisBoard);
             console.log(board);
@@ -65,6 +100,10 @@ multiview = {
             } else {
                 taskPreviewHTML = `<div class="task-preview no-task">No tasks yet</div>`;
             }
+            const maxExpectedTasks = 20;
+            const intensity = Math.min(totalTasks / maxExpectedTasks, 1);
+
+            const heatColor = `rgba(${255 * intensity}, 50, ${180 * (1 - intensity)}, 1)`;
 
             card.innerHTML = `
                 <div class="board-header">
@@ -77,6 +116,8 @@ multiview = {
                 </div>
                 
                 ${taskPreviewHTML}
+
+                ${multiview.generateGitHubHeatmap(board)}
             `;
             
             return card;
