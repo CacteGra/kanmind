@@ -771,10 +771,15 @@
             if (taskArray.length === 0 && boardTitle === "KanMindTasks") {
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
-                    const taskElement = createTaskElement(task);
-                    console.log(taskIdCounter);
-                    document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                     todayDate = ((new Date()).toISOString()).split('T')[0];
+                    var d = new Date();
+                    dayBefore = (new Date(d.setDate(d.getDate() - 2))).toISOString().split('T')[0];
+                    var d = new Date();
+                    lastWeek = (new Date(d.setDate(d.getDate() - 7))).toISOString().split('T')[0];
+                    var d = new Date();                 
+                    lastMonth = (new Date(d.setDate(d.getDate() - 30))).toISOString().split('T')[0];
+                    console.log("Make tasks");
+                    console.log([todayDate, dayBefore, lastWeek, lastMonth]);
                     const newTask = {
                         id: task.id,
                         title: task.title,
@@ -782,10 +787,13 @@
                         priority: task.priority,
                         assignee: task.assignee,
                         status: task.status,
-                        timestamps: [todayDate],
+                        timestamps: [todayDate, dayBefore, lastWeek, lastMonth],
                         linked: null
                     };
                     taskArray.push(newTask);
+                    const taskElement = createTaskElement(newTask);
+                    console.log(taskIdCounter);
+                    document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 });
                 persistence.saveTasks(boardTitle);
             };
