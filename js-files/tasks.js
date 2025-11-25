@@ -93,6 +93,7 @@
                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                     <span class="task-assignee">${task.assignee}</span>
                 </div>
+                ${heatmap.generateTaskHeatmap(task)}
                 ${htmlTasks}
             `;
 
@@ -149,6 +150,7 @@
                     <span class="task-priority priority-${priorityLabel}">${priorityLabel}</span>
                     <span class="task-assignee">${author.value}</span>
                 </div>
+                ${heatmap.generateTaskHeatmap(task)}
                 <div class="task-links" id="links-${taskTaskId}"><span class="linked">🖇</span></div>
             `;
 
