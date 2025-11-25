@@ -462,7 +462,9 @@
                     wholeTask.parentNode.removeChild(wholeTask);
                 } else {
                     linkedIndexNumber = taskArray.indexOf(deleteId);
-                    theTask.linked.splice(linkedIndexNumber, 1);
+                    if (theTask.linked) {
+                        theTask.linked.splice(linkedIndexNumber, 1);
+                    }
                     const taskInLinks = document.getElementsByClassName(`span-${deleteId}`);
                     while(taskInLinks.length > 0){
                         taskInLinks[0].parentNode.removeChild(taskInLinks[0]);
