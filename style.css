@@ -937,6 +937,11 @@ label {
     cursor: pointer;
 }
 
+.worked {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .delete-bin {
     color: transparent;
     text-shadow: 0 0 0 red;

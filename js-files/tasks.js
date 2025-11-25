@@ -85,6 +85,7 @@
                     <div class="modify-task edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
                     <div class="modify-task delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
                     <div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>
+                    ${checkWorkedOn(task.id)}
                     <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                 </div>
                 <div class="task-description">${task.description}</div>
@@ -140,6 +141,7 @@
                     <div class="modify-task edit-form" id=${taskTaskId} onclick="editTaskModal(this)">📝</div>
                     <div class="modify-task delete-bin" id=${taskTaskId} onclick="deleteTask(this)">🗑️</div>
                     <div class="modify-task" id=${taskTaskId} onclick="linkTask(this)">🔗</div>
+                    ${checkWorkedOn(taskTaskId)}
                     <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                 </div>
                 <div class="task-description">${description.value}</div>
@@ -422,7 +424,7 @@
                 alert('Please enter a task title');
                 return;
             }
-
+            todayDate = ((new Date()).toISOString()).split('T')[0];
             const newTask = {
                 id: `task-${++taskIdCounter}`,
                 title: title,
@@ -430,6 +432,7 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
+                timestamps: [todayDate],
                 linked: null
             };
             
@@ -726,6 +729,36 @@
             }
         }
 
+        function checkWorkedOn(taskId) {
+            html = `<div class="modify-task worked" id="${taskId}" onclick="workedOn(this)">☑</div>`;
+            taskArray.forEach(theTask => {
+                if (theTask.id === taskId) {
+                    theTask.timestamps.forEach(timestamp => {
+                        if (timestamp == ((new Date()).toISOString()).split('T')[0]) {
+                            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">☑</div>`;
+                        } else {
+                            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">✅</div>`;
+                            
+                        }
+                    });
+                }
+            });
+            return html;
+        }
+
+        function workedOn(taskId){
+            taskArray.forEach(theTask => {
+                if (theTask.id === taskId.id) {
+                    timestamp = ((new Date()).toISOString()).split('T')[0];
+                    timestamps = theTask.timestamps;
+                    timestamps.push(timestamp);
+                    theTask.timestamps = timestamps;
+                    taskId.innerHTML = "☑";
+                }
+            });
+            persistence.saveTasks(boardTitle);  
+        }
+
         // Initialize the board
         function initializeBoard() {
             persistence.loadLastBoard();
@@ -737,6 +770,7 @@
                     const taskElement = createTaskElement(task);
                     console.log(taskIdCounter);
                     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+                    todayDate = ((new Date()).toISOString()).split('T')[0];
                     const newTask = {
                         id: task.id,
                         title: task.title,
@@ -744,6 +778,7 @@
                         priority: task.priority,
                         assignee: task.assignee,
                         status: task.status,
+                        timestamps: [todayDate],
                         linked: null
                     };
                     taskArray.push(newTask);
