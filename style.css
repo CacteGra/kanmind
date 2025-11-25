@@ -362,19 +362,26 @@ h1 {
     font-weight: 500;
 }
 
+.heatmap-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .gh-heatmap {
     display: grid;
-    grid-template-columns: repeat(53, 8px);
+    grid-template-columns: repeat(15, 8px);
     grid-auto-rows: 8px;
-    gap: 3px;
+    gap: 10px;
     margin-top: 12px;
     margin-bottom: 5px;
 }
 
 .gh-cell {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 2px;
+    margin-right: 4px;
     background-color: rgba(255,255,255,0.1);
 }
 

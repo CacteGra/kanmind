@@ -62,14 +62,14 @@ multiview = {
                     }
                 });
 
-            let html = `<div class="gh-heatmap">`;
+            let html = `<div class="heatmap-div"><div class="gh-heatmap">`;
 
             for (let i = days - 1; i >= 0; i--) {
                 const count = counts[i];
                 html += `<div class="gh-cell" style="background:${multiview.heatColor(count)}"></div>`;
             }
 
-            html += `</div>`;
+            html += `</div></div>`;
             return html;
         },
 
@@ -100,10 +100,6 @@ multiview = {
             } else {
                 taskPreviewHTML = `<div class="task-preview no-task">No tasks yet</div>`;
             }
-            const maxExpectedTasks = 20;
-            const intensity = Math.min(totalTasks / maxExpectedTasks, 1);
-
-            const heatColor = `rgba(${255 * intensity}, 50, ${180 * (1 - intensity)}, 1)`;
 
             card.innerHTML = `
                 <div class="board-header">
