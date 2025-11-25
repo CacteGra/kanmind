@@ -560,7 +560,7 @@
                         element.classList.remove(oldHideCancelLink);
                         element.classList.add(hideCancelLink);
                     });
-                }, 2000);
+                }, 1000);
         }
 
         function handleTaskClick(e) {
@@ -602,7 +602,7 @@
                         element.classList.remove(oldHideCancelLink);
                         element.classList.add(hideCancelLink);
                     });
-                }, 2000);
+                }, 1000);
             }
         }
 
