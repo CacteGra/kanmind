@@ -78,7 +78,7 @@ multiview = {
                 
                 ${taskPreviewHTML}
 
-                ${heatmap.generateGitHubHeatmap(board)}
+                ${heatmap.generateBoardHeatmap(board)}
             `;
             
             return card;

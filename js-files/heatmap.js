@@ -9,7 +9,7 @@ heatmap = {
         },
 
 
-        generateGitHubHeatmap: function(board) {
+        generateBoardHeatmap: function(board) {
             const days = 30;
             const today = new Date();
             const counts = new Array(days).fill(0);
