@@ -68,7 +68,7 @@
                     console.log(task.linked);
                     if (task.linked.includes(theTask.id)) {
                         linkedTitle = theTask.title;
-                        htmlArray.push(`<span class="link-badge span-${theTask.id}" title="${linkedTitle}"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
+                        htmlArray.push(`<span class="link-badge span-${theTask.id}" title="${linkedTitle}" onclick="highlightLinked('${theTask.id}')"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
                         console.log(linkedTitle);
                     };
                 });
@@ -674,7 +674,7 @@
                     linksContainer.setAttribute('linked-data', linkedId);
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
-                    return `<span class="link-badge span-${linkedId}" title="${title}"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                    return `<span class="link-badge span-${linkedId}" title="${title}" onclick="highlightLinked('${linkedId}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
                 console.log(linkedTasks);
                 // Updating task with new linked task array
@@ -731,6 +731,15 @@
                     btn.classList.remove('activated');
                 }
             }
+        }
+
+        function highlightLinked(linkedId) {
+            console.log("inside highlight");
+            var linkedTask = document.querySelector('[data-task-id=' + linkedId + ']');
+            linkedTask.style.background = "chartreuse";
+            setTimeout(() => {
+                linkedTask.style.background = "white";
+            }, 1000);
         }
 
         function checkWorkedOn(taskId) {

@@ -969,6 +969,10 @@ label {
     text-shadow: 0 0 0 rgb(0, 0, 0);
 }
 
+.link-badge {
+    cursor: pointer;
+}
+
 @media (max-width:900px)  {
 
     .board-title-area {
