@@ -45,6 +45,7 @@ multiview = {
             const latestTask = multiview.getLatestTask(boards.boardTasks(thisBoard));
             const totalTasks = board.length;
             console.log(typeof(board));
+            board = Object.values(board);
             const doneTasks = board.filter(t => t.status === 'done').length;
 
             const card = document.createElement('div');
@@ -86,6 +87,7 @@ multiview = {
 
         getLatestTask: function(tasks) {
             // Exclude done tasks
+            tasks = Object.values(tasks);
             tasks = tasks.filter(t => t.status !== 'done');
             if (!tasks || tasks.length === 0) return null;
             // Using timestamp

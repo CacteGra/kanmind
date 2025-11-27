@@ -1,6 +1,6 @@
         // Loading from local state
         let taskIdCounter = 0;
-        var taskArray = [];
+        let taskObj = {};
         let boardTitle;
         let taskLinks = {};
         console.log(taskIdCounter);
@@ -58,22 +58,21 @@
             taskDiv.draggable = true;
             console.log(task.id);
             taskDiv.dataset.taskId = task.id;
+            taskDiv.dataset.boardId = boardTitle;
+            console.log("dataset board title");
+            console.log(taskDiv.dataset.boardId);
             var linkedTitle = '';
-            console.log(taskArray);
             var htmlArray = [];
             var taskElements;
             // Adding linked tasks to task
             if (task.linked) {
-                taskArray.forEach(theTask => {
-                    console.log("taskarraying");
-                    console.log(task.linked);
-                    if (task.linked.includes(theTask.id)) {
-                        linkedTitle = theTask.title;
-                        htmlArray.push(`<span class="link-badge span-${theTask.id}" title="${linkedTitle}" onclick="highlightLinked('${theTask.id}')"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
-                        console.log(linkedTitle);
-                    };
+                keys = Object.keys(task.linked);
+                keys.forEach(key => {
+                    linkedTitle = task.linked[key].title;
+                    htmlArray.push(`<span class="link-badge span-${task.linked[key].id}" title="${linkedTitle}" onclick="highlightLinked('${task.linked[key].id}')"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
+                    console.log(linkedTitle);
                 });
-            };
+            }
             taskElements = htmlArray.join('');
             if (task.linked) {
                 htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
@@ -175,7 +174,7 @@
                 linked: `task-${taskID}`
             };
             // Add to array for local state
-            taskArray.push(newTask);
+            taskObj[newTask.id] = newTask;
             // Saving local state
             persistence.saveTasks();
             return taskDiv;
@@ -231,13 +230,7 @@
                 const thisTaskId = draggedElement.attributes['data-task-id'];
                 // Update task status in array
                 console.log(thisTaskId.nodeValue);
-                taskArray.forEach(theTask => {
-                    console.log(theTask.id);
-                      if (theTask.id === thisTaskId.nodeValue) {
-                        console.log("if");
-                        theTask.status = this.attributes['data-status'].nodeValue;
-                      }
-                })
+                taskObj[thisTaskId.nodeValue].status = this.attributes['data-status'].nodeValue;;
                 // Update local save
                 persistence.saveTasks(boardTitle);
             }
@@ -448,7 +441,7 @@
             const taskElement = createTaskElement(newTask);
             document.getElementById(`${currentTaskStatus}-tasks`).appendChild(taskElement);
             // Add to array for local state
-            taskArray.push(newTask);
+            taskObj[newTask.id] = newTask;
             // Saving local state
             persistence.saveTasks();
             updateTaskCounts();
@@ -459,27 +452,27 @@
         function deleteTask(deleteId) {
             var indexNumber;
             var linkedIndexNumber;
-            taskArray.forEach(theTask => {
-                console.log(theTask.id);
-                indexNumber = taskArray.indexOf(theTask);
-                if (theTask.id === deleteId.id) {
-                    // Delete task in array
-                    taskArray.splice(indexNumber, 1);
-                    // Delete task in HTML by moving up the hierarchy
-                    var wholeTask = deleteId.parentNode;
-                    wholeTask = wholeTask.parentNode;
-                    wholeTask.parentNode.removeChild(wholeTask);
-                } else {
-                    linkedIndexNumber = taskArray.indexOf(deleteId);
-                    if (theTask.linked) {
-                        theTask.linked.splice(linkedIndexNumber, 1);
-                    }
+            taskToDelete = taskObj[deleteId.id];
+            // Delete from linked
+            linkedDict = taskToDelete.linked;
+            keys = Object.keys(linkedDict);
+            keys.forEach(key => {
+                linkedTasks = boards.loadTasks(key);
+                delete linkTasks.linked[taskToDelete.id];
+                persistence.saveTasks(key);
+                if (key == boardTitle) {
                     const taskInLinks = document.getElementsByClassName(`span-${deleteId}`);
                     while(taskInLinks.length > 0){
                         taskInLinks[0].parentNode.removeChild(taskInLinks[0]);
                     }
                 }
-            });
+            })          
+            // Delete task in object
+            delete taskToDelete
+            // Delete task in HTML by moving up the hierarchy
+            var wholeTask = deleteId.parentNode;
+            wholeTask = wholeTask.parentNode;
+            wholeTask.parentNode.removeChild(wholeTask);
             // Save new array to local
             persistence.saveTasks();
         }
@@ -512,35 +505,26 @@
                 linked: linkedTasksArray
             };
             console.log(newTaskEdit);
-            taskArray.forEach(theTask => {
-                arrayTaskId = theTask.id
-                console.log(newTaskEdit.id);
-                if (arrayTaskId === newTaskEdit.id) {
-                    // Edit task in array
-                    indexNumber = taskArray.indexOf(theTask);
-                    taskArray[indexNumber] = newTaskEdit;
-                    // Save edited array to local
-                    persistence.saveTasks();
-                    var linkedTitle = '';
-                    console.log(linkedTasks);
-                    // Edit task in HTML
-                    currentTask.innerHTML = `
-                        <div class="title-buttons">
-                            <div class="task-title">${newTaskEdit.title}</div>
-                            <div class="modify-task edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
-                            <div class="modify-task delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
-                            <div class="modify-task" id=${newTaskEdit.id} onclick="linkTask(this)">🔗</div>
-                            <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
-                        </div>
-                        <div class="task-description">${newTaskEdit.description}</div>
-                        <div class="task-meta">
-                            <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
-                            <span class="task-assignee">${newTaskEdit.assignee}</span>
-                        </div>
-                        ${linkedTasks.outerHTML}
-                    `;
-                }
-            });
+            // Edit task in object
+            taskObj[newTaskEdit.id] = newTaskEdit;
+            // Save edited array to local
+            persistence.saveTasks();
+            // Edit task in HTML
+            currentTask.innerHTML = `
+                <div class="title-buttons">
+                    <div class="task-title">${newTaskEdit.title}</div>
+                    <div class="modify-task edit-form" id=${newTaskEdit.id} onclick="editTaskModal(this)">📝</div>
+                    <div class="modify-task delete-bin" id=${newTaskEdit.id} onclick="deleteTask(this)">🗑️</div>
+                    <div class="modify-task" id=${newTaskEdit.id} onclick="linkTask(this)">🔗</div>
+                    <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
+                </div>
+                <div class="task-description">${newTaskEdit.description}</div>
+                <div class="task-meta">
+                    <span class="task-priority priority-${newTaskEdit.priority}">${newTaskEdit.priority}</span>
+                    <span class="task-assignee">${newTaskEdit.assignee}</span>
+                </div>
+                ${linkedTasks.outerHTML}
+            `;
             // Update linked tasks with this new task title
             const taskInLinks = document.getElementsByClassName(`span-${newTaskEdit.id}`);
             console.log(taskInLinks);
@@ -589,12 +573,16 @@
             e.stopPropagation();
             const clickedTask = this;
             const clickedTaskId = clickedTask.dataset.taskId;
+            const clickedTaskBoardId = clickedTask.dataset.boardId;
+            const clickedtaskObj = {clickedTaskBoardId: clickedTaskId};
             // Second click - link to target task
             const sourceTaskId = linkSourceTask.dataset.taskId;
+            const sourceTaskBoardId = linkSourceTask.dataset.boardId;
+            sourcetaskObj = {sourceTaskBoardId: sourceTaskId};
             
             if (sourceTaskId !== clickedTaskId) {
                 // Create link
-                createLink(sourceTaskId, clickedTaskId);
+                createLink(sourcetaskObj, clickedtaskObj);
                 updateLinkModeButton('✅ Linked! Select another task');
                 linkingOrigin = null;
                 console.log("removing everything");
@@ -634,17 +622,33 @@
             if (!taskLinks[sourceId].includes(targetId)) {
                 console.log("about to create link");
                 taskLinks[sourceId].push(targetId);
-                taskArray.forEach(theTask => {
-                    indexNumber = taskArray.indexOf(theTask);
-                    arrayTaskId = theTask.id;
-                    if (arrayTaskId === sourceId) {
-                        taskArray[indexNumber].linked = targetId;
-                        console.log(taskArray[indexNumber].linked);
-                    } else if (arrayTaskId === targetId) {
-                        taskArray[indexNumber].linked = sourceId;
-                        console.log(taskArray[indexNumber].linked);
-                    }
-                });
+                sourceBoardTitle = boards.getBoardKey(sourceId);
+                sourceTaskId = sourceId[sourceBoardTitle];
+                targetBoardTitle = boards.getBoardKey(targetId);
+                targetTaskId = targetId[targetBoardTitle];
+                if (boardTitle == sourceBoardTitle && boardTitle == targetBoardTitle){
+                    sourceTask = taskObj[sourceTaskId];
+                    linkedTargetTask = taskObj[targetTaskId];
+                    delete linkedTargetTask["linked"];
+                    sourceTask.linked[linkedTargetTask.id] = linkedTargetTask;
+                    targetTask = taskObj[targetTaskId];
+                    linkedSourceTask = sourceTask;
+                    delete linkedSourceTask["linked"];
+                    targetTask.linked[linkedSourceTask.id] = linkedSourceTask;
+                    persistence.save(sourceBoardTitle);
+                } else {
+                    sourceTasks = boards.boardTasks(sourceBoardTitle);
+                    sourceTask = sourceTasks[sourceId[sourceBoardTitle]];
+                    linkedTargetTask = taskObj[targetTaskId];
+                    delete linkedTargetTask["linked"];
+                    sourceTask.linked[linkedTargetTask.id] = linkedTargetTask;
+                    persistence.save(sourceBoardTitle);
+                    targetTasks = boards.boardTasks(targetBoardTitle);
+                    linkedSourceTask = sourceTask;
+                    delete linkedSourceTask["linked"];
+                    targetTask.linked[linkedSourceTask.id] = linkedSourceTask;
+                    persistence.save(targetBoardTitle);
+                }
                 updateTaskLinkDisplay(sourceId);
                 updateTaskLinkDisplay(targetId);
                 
@@ -681,7 +685,8 @@
                 const linkedArray = [];
                 // 
                 const taskElements = linkedTasks.map(linkedId => {
-                    linkedArray.push(linkedId);
+                    linkedtaskObj = taskObj[linkedId];
+                    linkedArray.push(linkedtaskObj);
                     linksContainer.setAttribute('linked-data', linkedId);
                     const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
@@ -689,13 +694,7 @@
                 }).join('');
                 console.log(linkedTasks);
                 // Updating task with new linked task array
-                taskArray.forEach(theTask => {
-                    console.log("taskarraying");
-                    if (theTask.id === taskId) {
-                    indexNumber = taskArray.indexOf(theTask);
-                    taskArray[indexNumber].linked = linkedArray;
-                    };
-                });
+                taskObj[theTask.id].linked = linkedArray;
 
                 persistence.saveTasks();
                 linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
@@ -757,31 +756,21 @@
 
         function checkWorkedOn(taskId) {
             html = `<div class="modify-task worked" id="${taskId}" onclick="workedOn(this)">☑</div>`;
-            taskArray.forEach(theTask => {
-                if (theTask.id === taskId) {
-                    theTask.timestamps.forEach(timestamp => {
-                        if (timestamp == ((new Date()).toISOString()).split('T')[0]) {
-                            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">☑</div>`;
-                        } else {
-                            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">✅</div>`;
-                            
-                        }
-                    });
+            taskObj[taskId].timestamps.forEach(timestamp => {
+                if (timestamp == ((new Date()).toISOString()).split('T')[0]) {
+                    html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">☑</div>`;
+                } else {
+                    html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">✅</div>`;
+                    
                 }
             });
             return html;
         }
 
         function workedOn(taskId){
-            taskArray.forEach(theTask => {
-                if (theTask.id === taskId.id) {
-                    timestamp = ((new Date()).toISOString()).split('T')[0];
-                    timestamps = theTask.timestamps;
-                    timestamps.push(timestamp);
-                    theTask.timestamps = timestamps;
-                    taskId.innerHTML = "☑";
-                }
-            });
+            timestamp = ((new Date()).toISOString()).split('T')[0];
+            taskObj[taskId.id].timestamps.push(timestamp);
+            taskId.innerHTML = "☑";
             persistence.saveTasks(boardTitle);  
         }
 
@@ -790,7 +779,7 @@
             persistence.loadLastBoard();
             persistence.loadTasks(boardTitle);
             // Create generic task examples when non exist
-            if (taskArray.length === 0 && boardTitle === "KanMindTasks") {
+            if (Object.keys(taskObj).length === 0 && boardTitle === "KanMindTasks") {
                 initialTasks.forEach(task => {
                     taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
                     todayDate = ((new Date()).toISOString()).split('T')[0];
@@ -812,7 +801,7 @@
                         timestamps: [todayDate, dayBefore, lastWeek, lastMonth],
                         linked: null
                     };
-                    taskArray.push(newTask);
+                    taskObj[newTask.id] = newTask;
                     const taskElement = createTaskElement(newTask);
                     console.log(taskIdCounter);
                     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);

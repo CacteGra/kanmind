@@ -113,6 +113,10 @@ boards = {
         allBoards = keys.filter(e => e !== 'lastBoard');
     },
 
+    getBoardKey: function(boardId) {
+        return Object.keys(boardId)[0];
+    },
+
     // Get all tasks from board
     boardTasks: function(boardTitle) {
         savedTasks = localStorage.getItem(boardTitle);
