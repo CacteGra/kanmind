@@ -6,6 +6,7 @@
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
+        let linkingOrigin = null;
         let hideCancelLink = "cancel-link-hidden";
         let allBoards;
 
@@ -79,12 +80,18 @@
             } else {
                 htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked">🖇</span></div>`;
             };
+            var linkingButton = null;
+            if (linkingOrigin == task.id){
+                linkingButton = `<div class="modify-task activating" id=${task.id} onclick="linkTask(this)">🔗 Select task to link</div>`
+            } else {
+                linkingButton = `<div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>`
+            }
             taskDiv.innerHTML = `
                 <div class="title-buttons">
                     <div class="task-title">${task.title}</div>
                     <div class="modify-task edit-form" id=${task.id} onclick="editTaskModal(this)">📝</div>
                     <div class="modify-task delete-bin" id=${task.id} onclick="deleteTask(this)">🗑️</div>
-                    <div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>
+                    ${linkingButton}
                     ${checkWorkedOn(task.id)}
                     <div class="modify-task ${hideCancelLink}" onclick="cancelLink()">❌</div>
                 </div>
@@ -549,8 +556,11 @@
             linkingReminder.style.display = 'none';
             updateLinkModeButton("Linking canceled");
             btn = document.querySelector('.activating');
-            btn.classList.remove('activating');
-            btn.classList.add("activated");
+            if (btn) {
+                btn.classList.remove('activating');
+                btn.classList.add("activated");
+            }
+            linkingOrigin = null;
             const tasks = document.querySelectorAll('.task');
             tasks.forEach(task => {
                 task.classList.remove('linking-mode', 'link-source');
@@ -586,6 +596,7 @@
                 // Create link
                 createLink(sourceTaskId, clickedTaskId);
                 updateLinkModeButton('✅ Linked! Select another task');
+                linkingOrigin = null;
                 console.log("removing everything");
                 btn = document.querySelector('.activating');
                 btn.classList.remove('activating');
@@ -698,6 +709,7 @@
             linkingMode = !linkingMode;
             const tasks = document.querySelectorAll('.task');
             linkSourceTask = btn.parentNode.parentNode;
+            linkingOrigin = linkSourceTask.dataset.taskId;
             linkSourceTask.classList.add('link-source');
             
             // Changing link button
