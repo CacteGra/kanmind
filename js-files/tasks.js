@@ -737,6 +737,7 @@
             console.log("inside highlight");
             var linkedTask = document.querySelector('[data-task-id=' + linkedId + ']');
             linkedTask.style.background = "chartreuse";
+            linkedTask.scrollIntoView();
             setTimeout(() => {
                 linkedTask.style.background = "white";
             }, 1000);
