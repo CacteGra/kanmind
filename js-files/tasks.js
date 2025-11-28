@@ -756,6 +756,7 @@
 
         function checkWorkedOn(taskId) {
             html = `<div class="modify-task worked" id="${taskId}" onclick="workedOn(this)">☑</div>`;
+            console.log(taskObj);
             taskObj[taskId].timestamps.forEach(timestamp => {
                 if (timestamp == ((new Date()).toISOString()).split('T')[0]) {
                     html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">☑</div>`;
