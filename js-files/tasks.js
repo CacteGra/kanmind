@@ -176,7 +176,7 @@
             // Add to array for local state
             taskObj[newTask.id] = newTask;
             // Saving local state
-            persistence.saveTasks();
+            persistence.saveTasks(boardTitle, taskObj);
             return taskDiv;
         }
 
@@ -232,7 +232,7 @@
                 console.log(thisTaskId.nodeValue);
                 taskObj[thisTaskId.nodeValue].status = this.attributes['data-status'].nodeValue;;
                 // Update local save
-                persistence.saveTasks(boardTitle);
+                persistence.saveTasks(boardTitle, taskObj);
             }
         }
 
@@ -435,7 +435,8 @@
                 assignee: assignee,
                 status: currentTaskStatus,
                 timestamps: [todayDate],
-                linked: null
+                board: boardTitle,
+                linked: new Object
             };
             
             const taskElement = createTaskElement(newTask);
@@ -443,7 +444,7 @@
             // Add to array for local state
             taskObj[newTask.id] = newTask;
             // Saving local state
-            persistence.saveTasks();
+            persistence.saveTasks(boardTitle, taskObj);
             updateTaskCounts();
             updateStats();
             closeTaskModal();
@@ -458,8 +459,8 @@
             keys = Object.keys(linkedDict);
             keys.forEach(key => {
                 linkedTasks = boards.loadTasks(key);
-                delete linkTasks.linked[taskToDelete.id];
-                persistence.saveTasks(key);
+                delete linkedTasks["linked"][taskToDelete.id];
+                persistence.saveTasks(key, linkedTasks);
                 if (key == boardTitle) {
                     const taskInLinks = document.getElementsByClassName(`span-${deleteId}`);
                     while(taskInLinks.length > 0){
@@ -468,13 +469,13 @@
                 }
             })          
             // Delete task in object
-            delete taskToDelete
+            delete taskToDelete;
             // Delete task in HTML by moving up the hierarchy
             var wholeTask = deleteId.parentNode;
             wholeTask = wholeTask.parentNode;
             wholeTask.parentNode.removeChild(wholeTask);
             // Save new array to local
-            persistence.saveTasks();
+            persistence.saveTasks(boardTitle, taskObj);
         }
 
         function editTask(e) {
@@ -508,7 +509,7 @@
             // Edit task in object
             taskObj[newTaskEdit.id] = newTaskEdit;
             // Save edited array to local
-            persistence.saveTasks();
+            persistence.saveTasks(boardTitle, saveTasks);
             // Edit task in HTML
             currentTask.innerHTML = `
                 <div class="title-buttons">
@@ -574,12 +575,15 @@
             const clickedTask = this;
             const clickedTaskId = clickedTask.dataset.taskId;
             const clickedTaskBoardId = clickedTask.dataset.boardId;
-            const clickedtaskObj = {clickedTaskBoardId: clickedTaskId};
+            boardTasks = boards.boardTasks(clickedTaskBoardId);
+            console.log(boardTasks[clickedTaskId]);
+            clickedtaskObj = boardTasks[clickedTaskId];
             // Second click - link to target task
+            console.log(linkSourceTask);
             const sourceTaskId = linkSourceTask.dataset.taskId;
             const sourceTaskBoardId = linkSourceTask.dataset.boardId;
-            sourcetaskObj = {sourceTaskBoardId: sourceTaskId};
-            
+            boardTasks = boards.boardTasks(sourceTaskBoardId);
+            sourcetaskObj = boardTasks[sourceTaskId];            
             if (sourceTaskId !== clickedTaskId) {
                 // Create link
                 createLink(sourcetaskObj, clickedtaskObj);
@@ -612,91 +616,73 @@
             }
         }
 
-        function createLink(sourceId, targetId) {
-            // Initialize arrays if they don't exist
-            if (!taskLinks[sourceId]) {
-                taskLinks[sourceId] = [];
-            }
-            console.log("in createlink");
-            // Add link if it doesn't already exist
-            if (!taskLinks[sourceId].includes(targetId)) {
-                console.log("about to create link");
-                taskLinks[sourceId].push(targetId);
-                sourceBoardTitle = boards.getBoardKey(sourceId);
-                sourceTaskId = sourceId[sourceBoardTitle];
-                targetBoardTitle = boards.getBoardKey(targetId);
-                targetTaskId = targetId[targetBoardTitle];
-                if (boardTitle == sourceBoardTitle && boardTitle == targetBoardTitle){
-                    sourceTask = taskObj[sourceTaskId];
-                    linkedTargetTask = taskObj[targetTaskId];
-                    delete linkedTargetTask["linked"];
-                    sourceTask.linked[linkedTargetTask.id] = linkedTargetTask;
-                    targetTask = taskObj[targetTaskId];
-                    linkedSourceTask = sourceTask;
-                    delete linkedSourceTask["linked"];
-                    targetTask.linked[linkedSourceTask.id] = linkedSourceTask;
-                    persistence.save(sourceBoardTitle);
-                } else {
-                    sourceTasks = boards.boardTasks(sourceBoardTitle);
-                    sourceTask = sourceTasks[sourceId[sourceBoardTitle]];
-                    linkedTargetTask = taskObj[targetTaskId];
-                    delete linkedTargetTask["linked"];
-                    sourceTask.linked[linkedTargetTask.id] = linkedTargetTask;
-                    persistence.save(sourceBoardTitle);
-                    targetTasks = boards.boardTasks(targetBoardTitle);
-                    linkedSourceTask = sourceTask;
-                    delete linkedSourceTask["linked"];
-                    targetTask.linked[linkedSourceTask.id] = linkedSourceTask;
-                    persistence.save(targetBoardTitle);
+        function createLink(sourceTask, targetTask) {
+            // Check if link exists
+            if (Object.keys(sourceTask["linked"]).length > 0) {
+                if (sourceTask["linked"][targetTask.board][targetTask]) {
+                    return "Already Linked";
                 }
-                updateTaskLinkDisplay(sourceId);
-                updateTaskLinkDisplay(targetId);
-                
-                // Mark tasks as linked
-                document.querySelector(`[data-task-id="${sourceId}"]`).classList.add('linked');
-                document.querySelector(`[data-task-id="${targetId}"]`).classList.add('linked');
-
-                linkingReminder = document.querySelector(".linking-reminder");
-                linkingReminder.style.display = 'none';
-                
             }
+            // Add link if it doesn't already exist
+            linkedArray = [];
+            let sourceLinking = {};
+            let targetLinking = {}
+            targetLinking[Object.keys(targetTask)[0]] = Object.values(targetTask)[0];
+            delete targetLinking['linked']
+            linkedArray.concat(sourceTask['linked']);
+            linkedArray.push(targetLinking);
+            sourceTask['linked'] = linkedArray;
+            sourceLinking[Object.keys(sourceTask)[0]] = Object.values(sourceTask)[0]
+            linkedArray = [];
+            delete sourceLinking['linked'];
+            linkedArray.concat(targetTask['linked']);
+            linkedArray.push(sourceLinking);
+            targetTask['linked'] = linkedArray;
+            sourceTasks = boards.boardTasks(sourceTask.board);
+            sourceTasks[sourceTask.id] = sourceTask;
+            if (sourceTask.board === targetTask.board) {
+                sourceTasks[targetTask.id] = targetTask;
+                persistence.saveTasks(sourceTask.board, sourceTasks);
+                taskObj = sourceTasks;
+                updateTaskLinkDisplay(sourceTask);
+                updateTaskLinkDisplay(targetTask);
+            } else {
+                persistence.saveTasks(sourceTask.board, sourceTasks);
+                targetTasks = boards.boardTasks(targetTask.board);
+                persistence.saveTasks(targetTask.board, targetTasks);
+                taskObj = targetTasks;
+                updateTaskLinkDisplay(targetTask);
+            }
+
+            // Mark tasks as linked
+            document.querySelector(`[data-task-id="${sourceTask.id}"]`).classList.add('linked');
+            document.querySelector(`[data-task-id="${targetTask.id}"]`).classList.add('linked');
+
+            linkingReminder = document.querySelector(".linking-reminder");
+            linkingReminder.style.display = 'none';
         }
 
-        function updateTaskLinkDisplay(taskId) {
-            console.log(taskId);
+        function updateTaskLinkDisplay(task) {
+            console.log(task);
+            taskId = task.id;
+            console.log(task['linked']);
             const linksContainer = document.getElementById(`links-${taskId}`);
             if (!linksContainer) return;
             
-            const linkedTasks = [];
+            const linkedTasks = task['linked'];
             
             // Find tasks this task links to
-            if (taskLinks[taskId]) {
-                linkedTasks.push(...taskLinks[taskId]);
-            }
-            
-            // Find tasks that link to this task
-            for (const [sourceId, targets] of Object.entries(taskLinks)) {
-                if (targets.includes(taskId) && !linkedTasks.includes(sourceId)) {
-                    linkedTasks.push(sourceId);
-                }
-            }
-            
             if (linkedTasks.length > 0) {
-                const linkedArray = [];
-                // 
                 const taskElements = linkedTasks.map(linkedId => {
-                    linkedtaskObj = taskObj[linkedId];
-                    linkedArray.push(linkedtaskObj);
-                    linksContainer.setAttribute('linked-data', linkedId);
-                    const linkedTask = document.querySelector(`[data-task-id="${linkedId}"]`);
+                    linkedIdHtml = boards.getBoardTaskValue(linkedId);
+                    console.log(linkedId);
+                    linksContainer.setAttribute('linked-data', linkedIdHtml.id);
+                    const linkedTask = document.querySelector(`[data-task-id="${linkedIdHtml}"]`);
                     const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
-                    return `<span class="link-badge span-${linkedId}" title="${title}" onclick="highlightLinked('${linkedId}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                    return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join('');
                 console.log(linkedTasks);
-                // Updating task with new linked task array
-                taskObj[theTask.id].linked = linkedArray;
 
-                persistence.saveTasks();
                 linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
                 linksContainer.style.display = 'block';
             } else {
@@ -772,7 +758,7 @@
             timestamp = ((new Date()).toISOString()).split('T')[0];
             taskObj[taskId.id].timestamps.push(timestamp);
             taskId.innerHTML = "☑";
-            persistence.saveTasks(boardTitle);  
+            persistence.saveTasks(boardTitle, taskObj);  
         }
 
         // Initialize the board
@@ -800,14 +786,16 @@
                         assignee: task.assignee,
                         status: task.status,
                         timestamps: [todayDate, dayBefore, lastWeek, lastMonth],
+                        board: boardTitle,
                         linked: null
                     };
+                    newTask["linked"] = {};
                     taskObj[newTask.id] = newTask;
                     const taskElement = createTaskElement(newTask);
                     console.log(taskIdCounter);
                     document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 });
-                persistence.saveTasks(boardTitle);
+                persistence.saveTasks(boardTitle, taskObj);
             };
             
             setupDropZones();

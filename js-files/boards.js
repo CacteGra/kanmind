@@ -117,6 +117,10 @@ boards = {
         return Object.keys(boardId)[0];
     },
 
+    getBoardTaskValue: function (taskId) {
+        return Object.values(taskId)[0];
+    },
+
     // Get all tasks from board
     boardTasks: function(boardTitle) {
         savedTasks = localStorage.getItem(boardTitle);

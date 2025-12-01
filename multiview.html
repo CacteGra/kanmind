@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Kanban Board</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* View Container - controls which view is visible */
+        .view-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Dashboard View Styles */
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .boards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .board-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .board-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .board-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .board-icon {
+            font-size: 1.8rem;
+        }
+
+        .board-stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .task-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .task-preview.no-task {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-style: italic;
+        }
+
+        .task-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .task-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .task-priority {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-low {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* Kanban Board View Styles */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .column {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 500px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .column-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .task-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .task {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: grab;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .task:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .task.dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+        }
+
+        .column.drag-over {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .breadcrumb {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .boards-grid, .board {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="view-container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-title" id="navTitle">📊 Dashboard</div>
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="switchView('dashboard')">📊 Dashboard</button>
+                <button class="nav-btn" onclick="switchView('kanban')">📋 Current Board</button>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view active">
+            <h1>🎯 All Your Boards</h1>
+            <div class="boards-grid" id="boardsGrid">
+                <!-- Boards will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Kanban Board View -->
+        <div id="kanbanView" class="view">
+            <div class="breadcrumb">
+                <a onclick="switchView('dashboard')">← Back to Dashboard</a>
+            </div>
+            <h1 id="currentBoardTitle">📋 Project Board</h1>
+            <div class="board" id="kanbanBoard">
+                <div class="column" data-status="todo">
+                    <div class="column-header">
+                        <h2 class="column-title">📋 To Do</h2>
+                        <span class="task-count" id="todo-count">0</span>
+                    </div>
+                    <div class="tasks" id="todo-tasks"></div>
+                </div>
+
+                <div class="column" data-status="inprogress">
+                    <div class="column-header">
+                        <h2 class="column-title">🔄 In Progress</h2>
+                        <span class="task-count" id="inprogress-count">0</span>
+                    </div>
+                    <div class="tasks" id="inprogress-tasks"></div>
+                </div>
+
+                <div class="column" data-status="review">
+                    <div class="column-header">
+                        <h2 class="column-title">👀 Review</h2>
+                        <span class="task-count" id="review-count">0</span>
+                    </div>
+                    <div class="tasks" id="review-tasks"></div>
+                </div>
+
+                <div class="column" data-status="done">
+                    <div class="column-header">
+                        <h2 class="column-title">✅ Done</h2>
+                        <span class="task-count" id="done-count">0</span>
+                    </div>
+                    <div class="tasks" id="done-tasks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure for multiple boards
+        const boards = [
+            {
+                id: 'board-1',
+                name: 'Website Redesign',
+                icon: '🎨',
+                tasks: [
+                    {
+                        id: 'task-1',
+                        title: 'Design New Homepage',
+                        description: 'Create mockups and wireframes for the new landing page',
+                        priority: 'high',
+                        assignee: 'Alice',
+                        status: 'inprogress',
+                        timestamp: new Date('2025-11-04T10:30:00')
+                    },
+                    {
+                        id: 'task-2',
+                        title: 'Update Color Scheme',
+                        description: 'Choose new brand colors',
+                        priority: 'medium',
+                        assignee: 'Bob',
+                        status: 'todo',
+                        timestamp: new Date('2025-11-03T14:20:00')
+                    }
+                ]
+            },
+            {
+                id: 'board-2',
+                name: 'Mobile App Development',
+                icon: '📱',
+                tasks: [
+                    {
+                        id: 'task-3',
+                        title: 'Implement Push Notifications',
+                        description: 'Set up Firebase Cloud Messaging',
+                        priority: 'high',
+                        assignee: 'Carol',
+                        status: 'inprogress',
+                        timestamp: new Date('2025-11-04T11:45:00')
+                    }
+                ]
+            },
+            {
+                id: 'board-3',
+                name: 'Marketing Campaign',
+                icon: '📢',
+                tasks: [
+                    {
+                        id: 'task-4',
+                        title: 'Create Social Media Content',
+                        description: 'Design graphics for Instagram',
+                        priority: 'medium',
+                        assignee: 'Dave',
+                        status: 'review',
+                        timestamp: new Date('2025-11-04T09:00:00')
+                    }
+                ]
+            }
+        ];
+
+        let currentBoardId = 'board-1';
+        let draggedElement = null;
+
+        // VIEW SWITCHING LOGIC
+        function switchView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Update navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected view
+            if (viewName === 'dashboard') {
+                document.getElementById('dashboardView').classList.add('active');
+                document.querySelector('[onclick="switchView(\'dashboard\')"]').classList.add('active');
+                document.getElementById('navTitle').textContent = '📊 Dashboard';
+                renderDashboard();
+            } else if (viewName === 'kanban') {
+                document.getElementById('kanbanView').classList.add('active');
+                document.querySelector('[onclick="switchView(\'kanban\')"]').classList.add('active');
+                const board = boards.find(b => b.id === currentBoardId);
+                document.getElementById('navTitle').textContent = `${board.icon} ${board.name}`;
+                renderKanbanBoard(currentBoardId);
+            }
+        }
+
+        // DASHBOARD RENDERING
+        function renderDashboard() {
+            const grid = document.getElementById('boardsGrid');
+            grid.innerHTML = '';
+            
+            boards.forEach(board => {
+                const card = createBoardCard(board);
+                grid.appendChild(card);
+            });
+        }
+
+        function createBoardCard(board) {
+            const latestTask = getLatestTask(board.tasks);
+            const totalTasks = board.tasks.length;
+            const doneTasks = board.tasks.filter(t => t.status === 'done').length;
+
+            const card = document.createElement('div');
+            card.className = 'board-card';
+            card.onclick = () => openBoard(board.id);
+            
+            let taskPreviewHTML;
+            if (latestTask) {
+                taskPreviewHTML = `
+                    <div class="task-preview">
+                        <div class="task-title">${latestTask.title}</div>
+                        <div class="task-description">${latestTask.description}</div>
+                        <div class="task-meta">
+                            <span class="task-priority priority-${latestTask.priority}">${latestTask.priority}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                taskPreviewHTML = `<div class="task-preview no-task">No tasks yet</div>`;
+            }
+
+            card.innerHTML = `
+                <div class="board-header">
+                    <div class="board-icon">${board.icon}</div>
+                    <div class="board-title">${board.name}</div>
+                </div>
+                
+                <div class="board-stats">
+                    <div class="stat-badge">📋 ${totalTasks} Tasks</div>
+                    <div class="stat-badge">✅ ${doneTasks} Done</div>
+                </div>
+                
+                ${taskPreviewHTML}
+            `;
+            
+            return card;
+        }
+
+        function getLatestTask(tasks) {
+            if (!tasks || tasks.length === 0) return null;
+            return tasks.sort((a, b) => b.timestamp - a.timestamp)[0];
+        }
+
+        function openBoard(boardId) {
+            currentBoardId = boardId;
+            switchView('kanban');
+        }
+
+        // KANBAN BOARD RENDERING
+        function renderKanbanBoard(boardId) {
+            const board = boards.find(b => b.id === boardId);
+            if (!board) return;
+
+            // Update title
+            document.getElementById('currentBoardTitle').textContent = `${board.icon} ${board.name}`;
+
+            // Clear all columns
+            ['todo', 'inprogress', 'review', 'done'].forEach(status => {
+                document.getElementById(`${status}-tasks`).innerHTML = '';
+            });
+
+            // Render tasks
+            board.tasks.forEach(task => {
+                const taskElement = createTaskElement(task);
+                document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
+            });
+
+            updateTaskCounts();
+            setupDragAndDrop();
+        }
+
+        function createTaskElement(task) {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task';
+            taskDiv.draggable = true;
+            taskDiv.dataset.taskId = task.id;
+            
+            taskDiv.innerHTML = `
+                <div class="task-title">${task.title}</div>
+                <div class="task-description">${task.description}</div>
+                <div class="task-meta">
+                    <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                </div>
+            `;
+
+            taskDiv.addEventListener('dragstart', handleDragStart);
+            taskDiv.addEventListener('dragend', handleDragEnd);
+
+            return taskDiv;
+        }
+
+        function updateTaskCounts() {
+            ['todo', 'inprogress', 'review', 'done'].forEach(status => {
+                const tasks = document.querySelectorAll(`#${status}-tasks .task`);
+                document.getElementById(`${status}-count`).textContent = tasks.length;
+            });
+        }
+
+        // DRAG AND DROP
+        function setupDragAndDrop() {
+            const columns = document.querySelectorAll('.column');
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+                column.addEventListener('dragenter', handleDragEnter);
+                column.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            if (!this.contains(e.relatedTarget)) {
+                this.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                const tasksContainer = this.querySelector('.tasks');
+                const newStatus = this.dataset.status;
+                
+                tasksContainer.appendChild(draggedElement);
+                
+                // Update task status in data
+                const taskId = draggedElement.dataset.taskId;
+                const board = boards.find(b => b.id === currentBoardId);
+                const task = board.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = newStatus;
+                }
+                
+                updateTaskCounts();
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            switchView('dashboard');
+        });
+    </script>
+</body>
+</html>
