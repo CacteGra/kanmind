@@ -67,10 +67,9 @@
             if (task.linked) {
                 keys = Object.keys(task.linked);
                 keys.forEach(key => {
-                    linkedTitle = task.linked[key].title;
-                    console.log(task.linked[key]);
-                    htmlArray.push(`<span class="link-badge span-${task.linked[key].id}" title="${linkedTitle}" onclick="highlightLinked('${task.linked[key].id}')"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
-                    console.log(linkedTitle);
+                    task.linked[key].forEach(linkedTasks => {
+                        htmlArray.push(`<span class="link-badge span-${linkedTasks.id}" title="${linkedTasks.title}" onclick="highlightLinked('${linkedTasks.id}')"> ${linkedTasks.title.substring(0, 15)}${linkedTasks.title.length > 15 ? '...' : ''},</span>`);
+                    })
                 });
             }
             taskElements = htmlArray.join('');
@@ -628,13 +627,21 @@
             let sourceLinking = {};
             let targetLinking = {}
             targetLinking = {...targetTask};
+            if (Object.keys(sourceTask.linked).length > 0) {
+              linkedArray = sourceTask['linked'][targetTask.board];
+            }
             delete targetLinking['linked']
-            sourceTask['linked'][targetLinking.board] = targetLinking;
+            linkedArray.push(targetLinking);
+            sourceTask['linked'][targetLinking.board] = linkedArray;
+            linkedArray = [];
             sourceLinking = {...sourceTask};
             console.log(sourceTask);
-            linkedArray = [];
+            if (Object.keys(targetTask.linked).length > 0) {
+              linkedArray = targetTask['linked'][sourceTask.board];
+            }
             delete sourceLinking['linked'];
-            targetTask['linked'][sourceTask.board] = sourceLinking;
+            linkedArray.push(sourceLinking);
+            targetTask['linked'][sourceTask.board] = linkedArray;
             console.log(sourceTask);
             sourceTasks = boards.boardTasks(sourceTask.board);
             sourceTasks[sourceTask.id] = sourceTask;
@@ -668,19 +675,23 @@
             const linksContainer = document.getElementById(`links-${taskId}`);
             if (!linksContainer) return;
             
-            const linkedTasks = Object.values(task['linked']);
-            
+            const linkedTasksBoards = Object.keys(task['linked']);
+            console.log(task.linked);
             // Find tasks this task links to
-            if (linkedTasks.length > 0) {
-                const taskElements = linkedTasks.map(linkedId => {
-                    linkedIdHtml = boards.getBoardTaskValue(linkedId);
-                    console.log(linkedId);
-                    linksContainer.setAttribute('linked-data', linkedIdHtml.id);
-                    const linkedTask = document.querySelector(`[data-task-id="${linkedIdHtml}"]`);
-                    const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
-                    return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
-                }).join('');
-                console.log(linkedTasks);
+            if (linkedTasksBoards.length > 0) {
+                const taskElements = [];
+                linkedTasksBoards.forEach(key => {
+                    linkedTasks = task.linked[key]
+                    console.log(linkedTasks);
+                    taskElements.push(linkedTasks.map(linkedId => {
+                        linkedIdHtml = linkedId.id;
+                        console.log(linkedId.id);
+                        linksContainer.setAttribute('linked-data', linkedIdHtml);
+                        const linkedTask = document.querySelector(`[data-task-id="${linkedIdHtml}"]`);
+                        const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
+                        return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                    }).join(''));
+                })
 
                 linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
                 linksContainer.style.display = 'block';
