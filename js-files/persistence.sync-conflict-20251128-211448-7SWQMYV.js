@@ -1,16 +1,14 @@
 persistence = {
 
-    saveTasks: function(boardId, taskDict) {
+    saveTasks: function() {
         // Save tasks and last board
-        localStorage.setItem(boardId, JSON.stringify(taskDict))
-        if (boardId === boardTitle) {
-            localStorage.setItem('lastBoard', boardTitle);
-        }
+        localStorage.setItem(boardTitle, JSON.stringify(taskObj));
+        localStorage.setItem('lastBoard', boardTitle);
     },
 
     // Selecting last board if exists
     loadLastBoard: function() {
-        //localStorage.clear();
+        localStorage.clear();
         let lastBoardItem = localStorage.getItem('lastBoard');
         if (lastBoardItem == null) {
             var kanMindBoard = "KanMindTasks";
@@ -27,13 +25,17 @@ persistence = {
         tempTaskObj = boards.boardTasks(boardTitle);
         // Building tasks
         if (tempTaskObj) {
-            taskObj = tempTaskObj;
             keys = Object.keys(tempTaskObj);
             keys.forEach(key => {
                 task = tempTaskObj[key];
+                taskObj[key] = task;
                 const taskElement = createTaskElement(task);
                 document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
                 ++taskIdCounter;
+                // Composing array for linked tasks
+                if (task.linked) {
+                    taskLinks[task.id] = task.linked;
+                };
             });
         };
         boards.changeBoardTitle(e);
