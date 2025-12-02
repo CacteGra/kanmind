@@ -2,7 +2,6 @@
         let taskIdCounter = 0;
         let taskObj = {};
         let boardTitle;
-        let taskLinks = {};
         console.log(taskIdCounter);
         let draggedElement = null;
         let linkingMode = false;
@@ -69,15 +68,16 @@
                 keys = Object.keys(task.linked);
                 keys.forEach(key => {
                     linkedTitle = task.linked[key].title;
+                    console.log(task.linked[key]);
                     htmlArray.push(`<span class="link-badge span-${task.linked[key].id}" title="${linkedTitle}" onclick="highlightLinked('${task.linked[key].id}')"> ${linkedTitle.substring(0, 15)}${linkedTitle.length > 15 ? '...' : ''},</span>`);
                     console.log(linkedTitle);
                 });
             }
             taskElements = htmlArray.join('');
-            if (task.linked) {
-                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
-            } else {
+            if (Object.keys(task.linked).length === 0) {
                 htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked">🖇</span></div>`;
+            } else {
+                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
             };
             var linkingButton = null;
             if (linkingOrigin == task.id){
@@ -627,23 +627,22 @@
             linkedArray = [];
             let sourceLinking = {};
             let targetLinking = {}
-            targetLinking[Object.keys(targetTask)[0]] = Object.values(targetTask)[0];
+            targetLinking = {...targetTask};
             delete targetLinking['linked']
-            linkedArray.concat(sourceTask['linked']);
-            linkedArray.push(targetLinking);
-            sourceTask['linked'] = linkedArray;
-            sourceLinking[Object.keys(sourceTask)[0]] = Object.values(sourceTask)[0]
+            sourceTask['linked'][targetLinking.board] = targetLinking;
+            sourceLinking = {...sourceTask};
+            console.log(sourceTask);
             linkedArray = [];
             delete sourceLinking['linked'];
-            linkedArray.concat(targetTask['linked']);
-            linkedArray.push(sourceLinking);
-            targetTask['linked'] = linkedArray;
+            targetTask['linked'][sourceTask.board] = sourceLinking;
+            console.log(sourceTask);
             sourceTasks = boards.boardTasks(sourceTask.board);
             sourceTasks[sourceTask.id] = sourceTask;
             if (sourceTask.board === targetTask.board) {
                 sourceTasks[targetTask.id] = targetTask;
                 persistence.saveTasks(sourceTask.board, sourceTasks);
                 taskObj = sourceTasks;
+                console.log(sourceTask['linked']);
                 updateTaskLinkDisplay(sourceTask);
                 updateTaskLinkDisplay(targetTask);
             } else {
@@ -669,7 +668,7 @@
             const linksContainer = document.getElementById(`links-${taskId}`);
             if (!linksContainer) return;
             
-            const linkedTasks = task['linked'];
+            const linkedTasks = Object.values(task['linked']);
             
             // Find tasks this task links to
             if (linkedTasks.length > 0) {
