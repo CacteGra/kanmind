@@ -469,7 +469,7 @@
                 }
             })          
             // Delete task in object
-            delete taskToDelete;
+            delete taskObj[deleteId.id];
             // Delete task in HTML by moving up the hierarchy
             var wholeTask = deleteId.parentNode;
             wholeTask = wholeTask.parentNode;
