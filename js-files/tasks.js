@@ -617,9 +617,17 @@
 
         function createLink(sourceTask, targetTask) {
             // Check if link exists
+            console.log(sourceTask);
+            console.log(sourceTask["linked"]);
             if (Object.keys(sourceTask["linked"]).length > 0) {
-                if (sourceTask["linked"][targetTask.board][targetTask]) {
-                    return "Already Linked";
+                if (Object.keys(sourceTask["linked"][targetTask.board]).length > 0) {
+                    console.log(sourceTask["linked"][targetTask.board]);
+                    testLinking = {...targetTask};
+                    delete testLinking['linked'];
+                    console.log(sourceTask["linked"][targetTask.board]);
+                    if (sourceTask["linked"][targetTask.board].some(obj => obj.id === targetTask.id)) {
+                        return "Already Linked";
+                    }
                 }
             }
             // Add link if it doesn't already exist
