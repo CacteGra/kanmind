@@ -438,10 +438,10 @@
                 linked: new Object
             };
             
-            const taskElement = createTaskElement(newTask);
-            document.getElementById(`${currentTaskStatus}-tasks`).appendChild(taskElement);
             // Add to array for local state
             taskObj[newTask.id] = newTask;
+            const taskElement = createTaskElement(newTask);
+            document.getElementById(`${currentTaskStatus}-tasks`).appendChild(taskElement);
             // Saving local state
             persistence.saveTasks(boardTitle, taskObj);
             updateTaskCounts();
