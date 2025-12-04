@@ -32,7 +32,7 @@ multiview = {
         renderDashboard: function() {
             const grid = document.getElementById('boardsGrid');
             grid.innerHTML = '';
-            
+            console.log(allBoards);
             allBoards.forEach(board => {
                 const card = multiview.createBoardCard(board);
                 grid.appendChild(card);
@@ -43,7 +43,8 @@ multiview = {
             board = boards.boardTasks(thisBoard);
             console.log(board);
             const latestTask = multiview.getLatestTask(boards.boardTasks(thisBoard));
-            const totalTasks = board.length;
+            console.log(Object.keys(board).length);
+            const totalTasks = Object.keys(board).length;
             console.log(typeof(board));
             board = Object.values(board);
             const doneTasks = board.filter(t => t.status === 'done').length;

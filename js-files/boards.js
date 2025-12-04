@@ -62,8 +62,8 @@ boards = {
         boards.changeBoardTitle();
         
         taskDict = {};
-        persistence.saveTasks(boardTitle, taskArray);
-        boards.newBoardSubmit();
+        console.log("saving task");
+        boards.newBoardSubmit(boardTitle, taskDict);
         updateTaskCounts();
         updateStats();
         boards.closeBoardModal();
@@ -94,10 +94,10 @@ boards = {
         setupPrioritySelection();
     },
 
-    newBoardSubmit: function(boardTitle) {
+    newBoardSubmit: function(boardTitle, taskDict) {
         // Save new board to local storage
-        taskArray = [];
-        persistence.saveTasks();
+        taskObj = {};
+        persistence.saveTasks(boardTitle, taskDict);
         // Remove previous board tasks from board
         boards.removeElementsByClass("repertory");
     },
@@ -123,9 +123,9 @@ boards = {
 
     // Get all tasks from board
     boardTasks: function(boardTitle) {
-        var savedArray = []
+        var savedArray = {};
         savedTasks = localStorage.getItem(boardTitle);
-        if (typeof savedTasks !== 'undefined') {
+        if (savedTasks !== 'undefined') {
             console.log(typeof savedTasks);
             savedArray = JSON.parse(savedTasks);
         }
