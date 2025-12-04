@@ -585,8 +585,8 @@
             sourcetaskObj = boardTasks[sourceTaskId];            
             if (sourceTaskId !== clickedTaskId) {
                 // Create link
-                createLink(sourcetaskObj, clickedtaskObj);
-                updateLinkModeButton('✅ Linked! Select another task');
+                text = createLink(sourcetaskObj, clickedtaskObj);
+                updateLinkModeButton(text);
                 linkingOrigin = null;
                 console.log("removing everything");
                 btn = document.querySelector('.activating');
@@ -674,6 +674,7 @@
 
             linkingReminder = document.querySelector(".linking-reminder");
             linkingReminder.style.display = 'none';
+            return '✅ Linked! Select another task';
         }
 
         function updateTaskLinkDisplay(task) {
