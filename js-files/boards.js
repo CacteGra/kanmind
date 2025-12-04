@@ -61,8 +61,8 @@ boards = {
         boardTitle = title;
         boards.changeBoardTitle();
         
-        taskArray = [];
-        persistence.saveTasks();
+        taskDict = {};
+        persistence.saveTasks(boardTitle, taskArray);
         boards.newBoardSubmit();
         updateTaskCounts();
         updateStats();
@@ -123,8 +123,13 @@ boards = {
 
     // Get all tasks from board
     boardTasks: function(boardTitle) {
+        var savedArray = []
         savedTasks = localStorage.getItem(boardTitle);
-        return JSON.parse(savedTasks);
+        if (typeof savedTasks !== 'undefined') {
+            console.log(typeof savedTasks);
+            savedArray = JSON.parse(savedTasks);
+        }
+        return savedArray;
     },
 
     listAllBoards: function() {
