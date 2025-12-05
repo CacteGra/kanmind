@@ -11,16 +11,16 @@ heatmap = {
 
         generateBoardHeatmap: function(board) {
             const days = 30;
-            const today = ((new Date()).toISOString()).split('T')[0];
+            const today = new Date();
             const counts = new Array(days).fill(0);
-            console.log(board);
             board
-                .filter(t => t.status === 'done')
                 .forEach(t => {
-                    const delta = Math.floor((today - t.timestamp) / (1000 * 60 * 60 * 24));
-                    if (delta >= 0 && delta < days) {
-                        counts[delta] += 1;
-                    }
+                    t.timestamps.forEach(timestamp => {
+                        const delta = Math.floor((today - new Date(timestamp)) / (1000 * 60 * 60 * 24));
+                        if (delta >= 0 && delta < days) {
+                            counts[delta] += 1;
+                        }
+                    });
                 });
 
             let html = `<div class="heatmap-div"><div class="gh-heatmap">`;
