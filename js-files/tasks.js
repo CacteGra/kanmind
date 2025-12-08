@@ -170,7 +170,8 @@
                 priority: priorityLabel,
                 assignee: author.value,
                 status: statusValue,
-                linked: `task-${taskID}`
+                linked: `task-${taskID}`,
+                board: boardTitle
             };
             // Add to array for local state
             taskObj[newTask.id] = newTask;
@@ -506,7 +507,8 @@
                 assignee: assignee,
                 status: currentTaskStatus,
                 linked: oldTask.linked,
-                timestamps: oldTask.timestamps
+                timestamps: oldTask.timestamps,
+                board: boardTitle
             };
             console.log(newTaskEdit);
             // Edit task in object
@@ -622,6 +624,7 @@
         function createLink(sourceTask, targetTask) {
             // Check if link exists
             console.log(sourceTask);
+            console.log(targetTask);
             console.log(sourceTask["linked"]);
             if (Object.keys(sourceTask["linked"]).length > 0) {
                 if (Object.keys(sourceTask["linked"][targetTask.board]).length > 0) {
