@@ -495,6 +495,9 @@
             linkedTasksArray = linkedTasks.getAttribute('linked-data').split(",");
             console.log(linkedTasks);
             console.log(linkedTasksArray);
+
+            oldTask = taskObj[taskId.value]
+
             const newTaskEdit = {
                 id: taskId.value,
                 title: title,
@@ -502,13 +505,14 @@
                 priority: priority,
                 assignee: assignee,
                 status: currentTaskStatus,
-                linked: linkedTasksArray
+                linked: oldTask.linked,
+                timestamps: oldTask.timestamps
             };
             console.log(newTaskEdit);
             // Edit task in object
             taskObj[newTaskEdit.id] = newTaskEdit;
             // Save edited array to local
-            persistence.saveTasks(boardTitle, saveTasks);
+            persistence.saveTasks(boardTitle, taskObj);
             // Edit task in HTML
             currentTask.innerHTML = `
                 <div class="title-buttons">
