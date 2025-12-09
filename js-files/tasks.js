@@ -456,17 +456,25 @@
             taskToDelete = taskObj[deleteId.id];
             // Delete from linked
             linkedDict = taskToDelete.linked;
-            keys = Object.keys(linkedDict);
-            keys.forEach(key => {
-                linkedTasks = boards.loadTasks(key);
-                delete linkedTasks["linked"][taskToDelete.id];
-                persistence.saveTasks(key, linkedTasks);
-                if (key == boardTitle) {
-                    const taskInLinks = document.getElementsByClassName(`span-${deleteId}`);
-                    while(taskInLinks.length > 0){
-                        taskInLinks[0].parentNode.removeChild(taskInLinks[0]);
+            linkedBoards = Object.keys(linkedDict);
+            linkedBoards.forEach(linkedBoard => {
+                var linkedTasks = boards.boardTasks(linkedBoard);
+                taskToDelete.linked[linkedBoard].forEach(linkedTask => {
+                    console.log(linkedTasks[linkedTask.id]);
+                    console.log(linkedTasks[linkedTask.id]["linked"][taskToDelete.board]);
+                    linkedArray = linkedTasks[linkedTask.id]["linked"][taskToDelete.board];
+                    const index = linkedArray.indexOf(deleteId.id);
+                    linkedArray.splice(index, 1);
+                    linkedTasks[linkedTask.id]["linked"][taskToDelete.board] = linkedArray;
+                    //delete linkedTasks[linkedTask.id]["linked"][taskToDelete.board][deleteId.id];
+                    persistence.saveTasks(linkedBoard, linkedTasks);
+                    if (linkedBoard == boardTitle) {
+                        const taskInLinks = document.getElementsByClassName(`span-${deleteId.id}`);
+                        while(taskInLinks.length > 0){
+                            taskInLinks[0].parentNode.removeChild(taskInLinks[0]);
+                        }
                     }
-                }
+                })
             })          
             // Delete task in object
             delete taskObj[deleteId.id];
