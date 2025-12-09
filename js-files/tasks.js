@@ -596,8 +596,10 @@
                 linkingOrigin = null;
                 console.log("removing everything");
                 btn = document.querySelector('.activating');
-                btn.classList.remove('activating');
-                btn.classList.add("activated");
+                if (btn) {
+                    btn.classList.remove('activating');
+                    btn.classList.add("activated");
+                }
                 const tasks = document.querySelectorAll('.task');
                 tasks.forEach(task => {
                     task.classList.remove('linking-mode', 'link-source');
@@ -627,7 +629,7 @@
             console.log(targetTask);
             console.log(sourceTask["linked"]);
             if (Object.keys(sourceTask["linked"]).length > 0) {
-                if (Object.keys(sourceTask["linked"][targetTask.board]).length > 0) {
+                if (sourceTask["linked"][targetTask.board] !== undefined) {
                     console.log(sourceTask["linked"][targetTask.board]);
                     testLinking = {...targetTask};
                     delete testLinking['linked'];
@@ -643,9 +645,11 @@
             let targetLinking = {}
             targetLinking = {...targetTask};
             if (Object.keys(sourceTask.linked).length > 0) {
-              linkedArray = sourceTask['linked'][targetTask.board];
+                if (sourceTask["linked"][targetTask.board] !== undefined) {
+                    linkedArray = sourceTask['linked'][targetTask.board];
+                }
             }
-            delete targetLinking['linked']
+            delete targetLinking['linked'];
             linkedArray.push(targetLinking);
             sourceTask['linked'][targetLinking.board] = linkedArray;
             linkedArray = [];
@@ -658,7 +662,7 @@
             linkedArray.push(sourceLinking);
             targetTask['linked'][sourceTask.board] = linkedArray;
             console.log(sourceTask);
-            sourceTasks = boards.boardTasks(sourceTask.board);
+            var sourceTasks = boards.boardTasks(sourceTask.board);
             sourceTasks[sourceTask.id] = sourceTask;
             if (sourceTask.board === targetTask.board) {
                 sourceTasks[targetTask.id] = targetTask;
@@ -667,16 +671,17 @@
                 console.log(sourceTask['linked']);
                 updateTaskLinkDisplay(sourceTask);
                 updateTaskLinkDisplay(targetTask);
+                document.querySelector(`[data-task-id="${sourceTask.id}"]`).classList.add('linked');
             } else {
+                console.log("not same board");
                 persistence.saveTasks(sourceTask.board, sourceTasks);
-                targetTasks = boards.boardTasks(targetTask.board);
+                var targetTasks = boards.boardTasks(targetTask.board);
+                targetTasks[targetTask.id] = targetTask;
                 persistence.saveTasks(targetTask.board, targetTasks);
                 taskObj = targetTasks;
                 updateTaskLinkDisplay(targetTask);
             }
-
             // Mark tasks as linked
-            document.querySelector(`[data-task-id="${sourceTask.id}"]`).classList.add('linked');
             document.querySelector(`[data-task-id="${targetTask.id}"]`).classList.add('linked');
 
             linkingReminder = document.querySelector(".linking-reminder");
@@ -704,7 +709,7 @@
                         console.log(linkedId.id);
                         linksContainer.setAttribute('linked-data', linkedIdHtml);
                         const linkedTask = document.querySelector(`[data-task-id="${linkedIdHtml}"]`);
-                        const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : 'Unknown';
+                        const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : linkedId.title;
                         return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                     }).join(''));
                 })
