@@ -648,27 +648,27 @@
                 }
             }
             // Add link if it doesn't already exist
-            linkedArray = [];
+            var linkedDict = {};
             let sourceLinking = {};
             let targetLinking = {}
             targetLinking = {...targetTask};
             if (Object.keys(sourceTask.linked).length > 0) {
                 if (sourceTask["linked"][targetTask.board] !== undefined) {
-                    linkedArray = sourceTask['linked'][targetTask.board];
+                    linkedDict = sourceTask['linked'][targetTask.board];
                 }
             }
             delete targetLinking['linked'];
-            linkedArray.push(targetLinking);
-            sourceTask['linked'][targetLinking.board] = linkedArray;
-            linkedArray = [];
+            linkedDict[targetLinking.id] = targetLinking;
+            sourceTask['linked'][targetLinking.board] = linkedDict;
+            linkedDict = {};
             sourceLinking = {...sourceTask};
             console.log(sourceTask);
             if (Object.keys(targetTask.linked).length > 0) {
               linkedArray = targetTask['linked'][sourceTask.board];
             }
             delete sourceLinking['linked'];
-            linkedArray.push(sourceLinking);
-            targetTask['linked'][sourceTask.board] = linkedArray;
+            linkedDict[sourceLinking.id] = sourceLinking;
+            targetTask['linked'][sourceTask.board] = linkedDict;
             console.log(sourceTask);
             var sourceTasks = boards.boardTasks(sourceTask.board);
             sourceTasks[sourceTask.id] = sourceTask;
@@ -710,7 +710,8 @@
             if (linkedTasksBoards.length > 0) {
                 const taskElements = [];
                 linkedTasksBoards.forEach(key => {
-                    linkedTasks = task.linked[key]
+                    var linkedTasks = [];
+                    linkedTasks = Object.values(task.linked[key]);
                     console.log(linkedTasks);
                     taskElements.push(linkedTasks.map(linkedId => {
                         linkedIdHtml = linkedId.id;
@@ -738,6 +739,7 @@
             
             // Changing link button
             if (linkingMode) {
+                var linkingReminder;
                 linkingReminder = document.querySelector(".linking-reminder");
                 linkingReminder.style.display = 'block';
                 btn.classList.add('activating');
