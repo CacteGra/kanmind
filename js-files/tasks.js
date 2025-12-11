@@ -646,7 +646,7 @@
                     testLinking = {...targetTask};
                     delete testLinking['linked'];
                     console.log(sourceTask["linked"][targetTask.board]);
-                    if (Object.keys(sourceTask["linked"][targetTask.board][targetTask.id]) !== undefined) {
+                    if (sourceTask["linked"][targetTask.board][targetTask.id] !== undefined) {
                         return "Already Linked";
                     }
                 }
