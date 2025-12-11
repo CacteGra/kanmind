@@ -67,8 +67,10 @@
             if (task.linked) {
                 keys = Object.keys(task.linked);
                 keys.forEach(key => {
-                    task.linked[key].forEach(linkedTasks => {
-                        htmlArray.push(`<span class="link-badge span-${linkedTasks.id}" title="${linkedTasks.title}" onclick="highlightLinked('${linkedTasks.id}')"> ${linkedTasks.title.substring(0, 15)}${linkedTasks.title.length > 15 ? '...' : ''},</span>`);
+                    linkedTasksIds = Object.keys(task.linked[key]);
+                    linkedTasksIds.forEach(linkTaskId => {
+                        linkedTask = task["linked"][key][linkTaskId];
+                        htmlArray.push(`<span class="link-badge span-${linkedTask.id}" title="${linkedTask.title}" onclick="highlightLinked('${linkedTask.id}')"> ${linkedTask.title.substring(0, 15)}${linkedTask.title.length > 15 ? '...' : ''},</span>`);
                     })
                 });
             }
@@ -451,22 +453,24 @@
         }
 
         function deleteTask(deleteId) {
-            var indexNumber;
-            var linkedIndexNumber;
             taskToDelete = taskObj[deleteId.id];
             // Delete from linked
             linkedDict = taskToDelete.linked;
             linkedBoards = Object.keys(linkedDict);
             linkedBoards.forEach(linkedBoard => {
                 var linkedTasks = boards.boardTasks(linkedBoard);
-                taskToDelete.linked[linkedBoard].forEach(linkedTask => {
-                    console.log(linkedTasks[linkedTask.id]);
-                    console.log(linkedTasks[linkedTask.id]["linked"][taskToDelete.board]);
-                    linkedArray = linkedTasks[linkedTask.id]["linked"][taskToDelete.board];
-                    const index = linkedArray.indexOf(deleteId.id);
-                    linkedArray.splice(index, 1);
-                    linkedTasks[linkedTask.id]["linked"][taskToDelete.board] = linkedArray;
+                linkedTasksIds = Object.keys(taskToDelete.linked[linkedBoard]);
+                console.log(linkedTasks);
+                linkedTasksIds.forEach(linkedTaskId => {
+                    console.log(linkedTaskId);
+                    delete linkedTasks[linkedTaskId]["linked"][taskToDelete.board][deleteId.id];
+                    //const index = linkedArray.indexOf(deleteId.id);
+                    //linkedArray.splice(index, 1);
+                    //linkedTasks[linkedTask.id]["linked"][taskToDelete.board] = linkedArray;
                     //delete linkedTasks[linkedTask.id]["linked"][taskToDelete.board][deleteId.id];
+                    console.log(linkedBoard);
+                    console.log(linkedTasks);
+                    taskObj = linkedTasks;
                     persistence.saveTasks(linkedBoard, linkedTasks);
                     if (linkedBoard == boardTitle) {
                         const taskInLinks = document.getElementsByClassName(`span-${deleteId.id}`);
@@ -642,7 +646,7 @@
                     testLinking = {...targetTask};
                     delete testLinking['linked'];
                     console.log(sourceTask["linked"][targetTask.board]);
-                    if (sourceTask["linked"][targetTask.board].some(obj => obj.id === targetTask.id)) {
+                    if (sourceTask["linked"][targetTask.board][targetTask.id].length > 0) {
                         return "Already Linked";
                     }
                 }
