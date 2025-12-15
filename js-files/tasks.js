@@ -470,7 +470,6 @@
                     //delete linkedTasks[linkedTask.id]["linked"][taskToDelete.board][deleteId.id];
                     console.log(linkedBoard);
                     console.log(linkedTasks);
-                    taskObj = linkedTasks;
                     persistence.saveTasks(linkedBoard, linkedTasks);
                     if (linkedBoard == boardTitle) {
                         const taskInLinks = document.getElementsByClassName(`span-${deleteId.id}`);
@@ -600,8 +599,12 @@
             const sourceTaskId = linkSourceTask.dataset.taskId;
             const sourceTaskBoardId = linkSourceTask.dataset.boardId;
             boardTasks = boards.boardTasks(sourceTaskBoardId);
-            sourcetaskObj = boardTasks[sourceTaskId];            
-            if (sourceTaskId !== clickedTaskId) {
+            sourcetaskObj = boardTasks[sourceTaskId];
+            console.log(clickedTaskId);
+            console.log(sourceTaskId);
+            if (sourceTaskId == clickedTaskId && sourcetaskObj.board == clickedtaskObj.board) {
+                return false;
+            } else {
                 // Create link
                 text = createLink(sourcetaskObj, clickedtaskObj);
                 updateLinkModeButton(text);
@@ -721,8 +724,7 @@
                         linkedIdHtml = linkedId.id;
                         console.log(linkedId.id);
                         linksContainer.setAttribute('linked-data', linkedIdHtml);
-                        const linkedTask = document.querySelector(`[data-task-id="${linkedIdHtml}"]`);
-                        const title = linkedTask ? linkedTask.querySelector('.task-title').textContent : linkedId.title;
+                        const title = linkedId.title;
                         return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                     }).join(''));
                 })
