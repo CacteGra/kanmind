@@ -75,10 +75,10 @@
                 });
             }
             taskElements = htmlArray.join('');
-            if (Object.keys(task.linked).length === 0) {
-                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked">🖇</span></div>`;
-            } else {
+            if (taskElements) {
                 htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
+            } else {
+                htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked"></span></div>`;
             };
             var linkingButton = null;
             if (linkingOrigin == task.id){
