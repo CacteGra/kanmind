@@ -504,9 +504,7 @@
                 return;
             }
             linkedTasks = document.getElementById("links-"+taskId.value);
-            linkedTasksArray = linkedTasks.getAttribute('linked-data').split(",");
             console.log(linkedTasks);
-            console.log(linkedTasksArray);
 
             oldTask = taskObj[taskId.value]
 
@@ -720,16 +718,18 @@
                     var linkedTasks = [];
                     linkedTasks = Object.values(task.linked[key]);
                     console.log(linkedTasks);
-                    taskElements.push(linkedTasks.map(linkedId => {
-                        linkedIdHtml = linkedId.id;
-                        console.log(linkedId.id);
-                        linksContainer.setAttribute('linked-data', linkedIdHtml);
-                        const title = linkedId.title;
-                        return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
-                    }).join(''));
+                    if (linkedTasks) {
+                        taskElements.push(linkedTasks.map(linkedId => {
+                            linkedIdHtml = linkedId.id;
+                            var linkedIdHtml;
+                            console.log(linkedId.id);
+                            linksContainer.setAttribute('linked-data', linkedIdHtml);
+                            const title = linkedId.title;
+                            return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                        }).join(' '));
+                    }
                 })
-
-                linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements;
+                linksContainer.innerHTML = '<span class="linked">🖇</span>'+taskElements.join(' ');
                 linksContainer.style.display = 'block';
             } else {
                 linksContainer.style.display = 'none';
