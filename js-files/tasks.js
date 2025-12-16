@@ -667,14 +667,12 @@
             sourceTask['linked'][targetLinking.board] = linkedDict;
             linkedDict = {};
             sourceLinking = {...sourceTask};
-            console.log(sourceTask);
             if (Object.keys(targetTask.linked).length > 0) {
-              linkedArray = targetTask['linked'][sourceTask.board];
+              linkedDict = targetTask['linked'][sourceTask.board];
             }
             delete sourceLinking['linked'];
             linkedDict[sourceLinking.id] = sourceLinking;
             targetTask['linked'][sourceTask.board] = linkedDict;
-            console.log(sourceTask);
             var sourceTasks = boards.boardTasks(sourceTask.board);
             sourceTasks[sourceTask.id] = sourceTask;
             if (sourceTask.board === targetTask.board) {
@@ -686,7 +684,6 @@
                 updateTaskLinkDisplay(targetTask);
                 document.querySelector(`[data-task-id="${sourceTask.id}"]`).classList.add('linked');
             } else {
-                console.log("not same board");
                 persistence.saveTasks(sourceTask.board, sourceTasks);
                 var targetTasks = boards.boardTasks(targetTask.board);
                 targetTasks[targetTask.id] = targetTask;
