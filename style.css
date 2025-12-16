@@ -834,6 +834,10 @@ text-align: center;
     padding-bottom: 20px;
 }
 
+.board-download-area {
+      display: block ruby;
+}
+
 #boardName {
     color: white;
     font-size: 2.5rem;
@@ -948,6 +952,13 @@ label {
 .main-add {
   border: 2px solid rgba(255, 255, 255, 0.3);
   max-width: 120px;
+}
+
+.main-download {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  max-width: 240px;
+  margin-left: auto;
+  margin-right: 200px;
 }
 
 .buttons-div {
