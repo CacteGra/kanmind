@@ -58,10 +58,6 @@
                     <div class="board-title-area">
                         <h1>🎯 All Your Boards</h1>
                     </div>
-                    <div class="board-download-area">
-
-                    </div>
-                    
                 </div>
                 <button class="main-download add-task-btn" onclick="downloads.downloadAll()">
                     Download All as Markdown
@@ -288,6 +284,25 @@
             </div>
         </div>
 
+        <!-- Markdown Preview Modal -->
+        <div class="modal-overlay" id="downloadModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">📄 Markdown Preview</h3>
+                    <button class="modal-close" onclick="downloads.closeDownloadModal()">&times;</button>
+                </div>
+                <div class="markdown-preview" id="markdownPreview"></div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="downloads.downloadMarkdown()">
+                        💾 Download Markdown
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloads.copyToClipboard()">
+                        📋 Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="modalOverlay" onclick="boards.closeUlModal()" class="overlay hide"></div>
         
         <script src="js-files/heatmap.js"></script>
@@ -295,6 +310,7 @@
         <script src="js-files/persistence.js"></script>
         <script src="js-files/multiview.js"></script>
         <script src="js-files/tasks.js"></script>
+        <script src="js-files/downloads.js"></script>
 
     </body>
 </html>

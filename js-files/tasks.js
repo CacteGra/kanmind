@@ -847,6 +847,7 @@
             updateStats();
             setupModal();
             boards.setupBoardModal();
+            downloads.setupDownloadModal();
         }
 
         // Start the application
