@@ -69,6 +69,19 @@ downloads = {
         return markdown;
     },
 
+    // DOWNLOAD FUNCTIONS
+    downloadMarkdown: function() {
+        const blob = new Blob([currentMarkdown], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${currentBoardName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    },
+
     openDownloadModal: function(markdown, boardName) {
         currentMarkdown = markdown;
         currentBoardName = boardName;
