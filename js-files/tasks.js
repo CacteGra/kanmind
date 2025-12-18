@@ -853,8 +853,7 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeBoard);
         document.addEventListener('DOMContentLoaded', () => {
-            viewNameButton = document.getElementsByClassName("toggle-tables")[0];
-            multiview.switchView(viewNameButton);
+            multiview.switchView();
         }),
 
         function checkHidden(element){
