@@ -7,8 +7,8 @@ downloads = {
     },
 
     // MARKDOWN GENERATION FUNCTIONS
-    generateBoardMarkdown: function(board) {
-        tasks = Object.values(Object.values(board));
+    generateBoardMarkdown: function(boardName, allBoardTasks) {
+        tasks = Object.values(Object.values(allBoardTasks));
         const progress = downloads.calculateProgress(tasks);
         const totalTasks = tasks.length;
         const todoTasks = tasks.filter(t => t.status === 'todo').length;
@@ -16,7 +16,7 @@ downloads = {
         const reviewTasks = tasks.filter(t => t.status === 'review').length;
         const doneTasks = tasks.filter(t => t.status === 'done').length;
 
-        let markdown = `# ${board.icon} ${board.name}\n\n`;
+        let markdown = `# ${boardName}\n\n`;
         markdown += `**Generated:** ${new Date().toLocaleString()}\n\n`;
         markdown += `## 📊 Board Statistics\n\n`;
         markdown += `- **Total Tasks:** ${totalTasks}\n`;
@@ -55,12 +55,12 @@ downloads = {
         boards.getBoards();
         let markdown = `# 📊 All Project Boards\n\n`;
         markdown += `**Generated:** ${new Date().toLocaleString()}\n\n`;
-        markdown += `**Total Boards:** ${boards.length}\n\n`;
+        markdown += `**Total Boards:** ${allBoards.length}\n\n`;
         markdown += `---\n\n`;
 
         allBoards.forEach((board, index) => {
             allBoardTasks = boards.boardTasks(board);
-            markdown += downloads.generateBoardMarkdown(allBoardTasks);
+            markdown += downloads.generateBoardMarkdown(board, allBoardTasks);
             if (index < allBoards.length - 1) {
                 markdown += `\n---\n\n`;
             }
