@@ -59,9 +59,15 @@
                         <h1>🎯 All Your Boards</h1>
                     </div>
                 </div>
-                <button class="main-download add-task-btn" onclick="downloads.downloadAll()">
-                    Download All as Markdown
-                </button>
+                <div class="down-up-load">
+                    <button class="main-download add-task-btn" onclick="downloads.downloadAll()">
+                        Download All as Markdown
+                    </button>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="markdownUpload" accept=".md,.markdown" onchange="uploads.handleFileUpload(event)">
+                        <label for="markdownUpload" class="file-input-label">📤 Upload Markdown</label>
+                    </div>
+                </div>
                 <div class="linking-reminder">
                 <div class="try-link">
                     <div class="select-link">🔗 Select task to link</div>
@@ -311,6 +317,7 @@
         <script src="js-files/multiview.js"></script>
         <script src="js-files/tasks.js"></script>
         <script src="js-files/downloads.js"></script>
+        <script src="js-files/uploads.js"></script>
 
     </body>
 </html>

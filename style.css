@@ -954,11 +954,15 @@ label {
   max-width: 120px;
 }
 
+.down-up-load {
+    display: flex;
+    gap: 20px;
+}
+
 .main-download {
   border: 2px solid rgba(255, 255, 255, 0.3);
   max-width: 240px;
   margin-left: auto;
-  margin-right: 200px;
 }
 
 .markdown-preview {
@@ -972,6 +976,30 @@ label {
     max-height: 400px;
     overflow-y: auto;
     margin-bottom: 20px;
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-input-label {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.file-input-label:hover {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
 }
 
 .buttons-div {
