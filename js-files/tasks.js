@@ -267,7 +267,7 @@ function changeSubmitModal(buttonRole) {
     form.replaceWith(form.cloneNode(true));
     setupPrioritySelection();
     const replacedForm = document.getElementById('taskForm');
-    
+
     if (buttonRole == "Edit Task") {
         replacedForm.addEventListener('submit', editTask);
         const button = document.getElementById("submitTask");
@@ -286,31 +286,32 @@ function addNewTaskModal(status) {
 
 function editTaskModal(editTaskId) {
     openTaskModal("Edit Task");
-    var taskId = document.getElementById("taskID");
+    const taskId = document.getElementById("taskID");
     taskId.value = editTaskId.id;
-    var currentTask = editTaskId.parentNode.parentNode;
-    var currentTaskId = editTaskId.id;
-    var currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
-    var statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
+    const currentTask = editTaskId.parentNode.parentNode;
+    const currentTaskId = editTaskId.id;
+    const currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
+    const statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
     currentTaskStatus = statusName.value;
     document.querySelectorAll('.priority-option').forEach(option => {
         option.classList.remove('selected');
     });
-    var currentTitle = currentTask.querySelector(".task-title");
-    var currentDescription = currentTask.querySelector(".task-description");
-    var currentPriority = currentTask.querySelector(".task-priority");
-    var currentAuthor = currentTask.querySelector(".task-assignee");
+
+    const currentTitle = currentTask.querySelector(".task-title");
+    const currentDescription = currentTask.querySelector(".task-description");
+    const currentPriority = currentTask.querySelector(".task-priority");
+    const currentAuthor = currentTask.querySelector(".task-assignee");
+
     document.getElementById("taskTitle").value = currentTitle.innerText;
     document.getElementById("taskDescription").value = currentDescription.innerText;
     document.querySelector('.priority-option[data-priority="'+currentPriority.innerText.toLowerCase()+'"]').classList.add('selected');
     document.getElementById("taskAssignee").value = currentAuthor.innerText;
 }
 
+// Modal functions
 function openTaskModal(buttonRole) {
     const modal = document.getElementById('taskModal');
     const form = document.getElementById('taskForm');
-    
-    // Reset form
     form.reset();
     changeSubmitModal(buttonRole);
     
@@ -343,7 +344,7 @@ function handleFormSubmit(e) {
         alert('Please enter a task title');
         return;
     }
-    todayDate = ((new Date()).toISOString()).split('T')[0];
+    const todayDate = ((new Date()).toISOString()).split('T')[0];
     const newTask = {
         id: `task-${++taskIdCounter}`,
         title: title,
