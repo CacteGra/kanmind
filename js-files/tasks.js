@@ -44,43 +44,34 @@ const initialTasks = [
     }
 ];
 
-// Create task when loading local state
+// Create task element
 function createTaskElement(task) {
-    title = document.getElementById("titleValue");
-    description = document.getElementById("descriptionValue");
-    priority = document.getElementById("priorityValue");
-    author = document.getElementById("authorValue");
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task';
     taskDiv.draggable = true;
     taskDiv.dataset.taskId = task.id;
     taskDiv.dataset.boardId = boardTitle;
-    var linkedTitle = '';
-    var htmlArray = [];
-    var taskElements;
-    // Adding linked tasks to task
+
+    // Linked tasks
+    let htmlArray = [];
     if (task.linked) {
-        keys = Object.keys(task.linked);
-        keys.forEach(key => {
-            linkedTasksIds = Object.keys(task.linked[key]);
-            linkedTasksIds.forEach(linkTaskId => {
-                linkedTask = task["linked"][key][linkTaskId];
+        Object.keys(task.linked).forEach(key => {
+            Object.keys(task.linked[key]).forEach(linkTaskId => {
+                const linkedTask = task.linked[key][linkTaskId];
                 htmlArray.push(`<span class="link-badge span-${linkedTask.id}" title="${linkedTask.title}" onclick="highlightLinked('${linkedTask.id}')"> ${linkedTask.title.substring(0, 15)}${linkedTask.title.length > 15 ? '...' : ''},</span>`);
-            })
+            });
         });
     }
-    taskElements = htmlArray.join('');
-    if (taskElements) {
-        htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>`;
-    } else {
-        htmlTasks = `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked"></span></div>`;
-    };
-    var linkingButton = null;
-    if (linkingOrigin == task.id){
-        linkingButton = `<div class="modify-task activating" id=${task.id} onclick="linkTask(this)">🔗 Select task to link</div>`
-    } else {
-        linkingButton = `<div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>`
-    }
+
+    const taskElements = htmlArray.join('');
+    const htmlTasks = taskElements ? 
+        `<div class="task-links" id="links-${task.id}" linked-data="${task.linked}" style="display: block;"><span class="linked">🖇</span>${taskElements}</div>` :
+        `<div class="task-links" id="links-${task.id}" linked-data="" style="display: none;"><span class="linked"></span></div>`;
+
+    const linkingButton = linkingOrigin == task.id ?
+        `<div class="modify-task activating" id=${task.id} onclick="linkTask(this)">🔗 Select task to link</div>` :
+        `<div class="modify-task" id=${task.id} onclick="linkTask(this)">🔗</div>`;
+
     taskDiv.innerHTML = `
         <div class="title-buttons">
             <div class="task-title">${task.title}</div>
@@ -103,7 +94,6 @@ function createTaskElement(task) {
     taskDiv.addEventListener('dragstart', handleDragStart);
     taskDiv.addEventListener('dragend', handleDragEnd);
     taskDiv.addEventListener('click', handleTaskClick);
-
     return taskDiv;
 }
 
