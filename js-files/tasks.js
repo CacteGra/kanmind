@@ -97,37 +97,26 @@ function createTaskElement(task) {
     return taskDiv;
 }
 
-// Create task live
+// Create base task element
 function createBaseTaskElement(task) {
-    title = document.getElementById("titleValue");
-    description = document.getElementById("descriptionValue");
-    priority = document.getElementById("priorityValue");
-    author = document.getElementById("authorValue");
-    statusValue = document.getElementById("modalSubmit");
-    statusValue = statusValue.name;
+    const title = document.getElementById("titleValue");
+    const description = document.getElementById("descriptionValue");
+    const priority = document.getElementById("priorityValue");
+    const author = document.getElementById("authorValue");
+    const statusValue = document.getElementById("modalSubmit").name;
 
-    // Abandon adding task if missing value
     if (!title.value || !description.value || !priority.value || !author.value || !statusValue) {
         return false;
     }
 
-    // Priority number to label
-    if (priority.value == 0) {
-        priorityLabel = "low"
-    }
-    else if (priority.value == 1) {
-        priorityLabel = "medium";
-    }
-    else{
-        priorityLabel = "high";
-    }
+    const priorityLabel = priority.value == 0 ? "low" : priority.value == 1 ? "medium" : "high";
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task';
     taskDiv.draggable = true;
-    taskID = ++taskIdCounter;
-    taskTaskId = `task-${taskID}`;
+    const taskID = ++taskIdCounter;
+    const taskTaskId = `task-${taskID}`;
     taskDiv.dataset.taskId = taskTaskId;
-    
+
     taskDiv.innerHTML = `
         <div class="title-buttons">
             <div class="task-title">${title.value}</div>
@@ -149,20 +138,21 @@ function createBaseTaskElement(task) {
     // Add drag event listeners
     taskDiv.addEventListener('dragstart', handleDragStart);
     taskDiv.addEventListener('dragend', handleDragEnd);
-    document.getElementById(`${statusValue}-tasks`).appendChild(taskDiv)
+    document.getElementById(`${statusValue}-tasks`).appendChild(taskDiv);
+
     const newTask = {
-        id: `task-${taskID}`,
+        id: taskTaskId,
         title: title.value,
         description: description.value,
         priority: priorityLabel,
         assignee: author.value,
         status: statusValue,
-        linked: `task-${taskID}`,
+        linked: {},
         board: boardTitle
     };
+
     // Add to array for local state
     taskObj[newTask.id] = newTask;
-    // Saving local state
     persistence.saveTasks(boardTitle, taskObj);
     return taskDiv;
 }
