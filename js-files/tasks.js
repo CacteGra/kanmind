@@ -1,4 +1,4 @@
-// Loading from local state
+// Global variables
 let taskIdCounter = 0;
 let taskObj = {};
 let boardTitle;
@@ -7,6 +7,7 @@ let linkingMode = false;
 let linkingOrigin = null;
 let hideCancelLink = "cancel-link-hidden";
 let allBoards;
+let currentTaskStatus;
 
 // Sample tasks to start with
 const initialTasks = [
@@ -157,6 +158,7 @@ function createBaseTaskElement(task) {
     return taskDiv;
 }
 
+// Drag and drop functions
 function handleDragStart(e) {
     draggedElement = this;
     this.classList.add('dragging');
@@ -171,7 +173,6 @@ function handleDragEnd(e) {
 
 function setupDropZones() {
     const columns = document.querySelectorAll('.column');
-    
     columns.forEach(column => {
         column.addEventListener('dragover', handleDragOver);
         column.addEventListener('drop', handleDrop);
@@ -212,9 +213,9 @@ function handleDrop(e) {
     }
 }
 
+// Task count and stats
 function updateTaskCounts() {
     const statuses = ['todo', 'inprogress', 'review', 'done'];
-    
     statuses.forEach(status => {
         const tasks = document.querySelectorAll(`#${status}-tasks .task`);
         const countElement = document.getElementById(`${status}-count`);
@@ -226,53 +227,9 @@ function updateStats() {
     const totalTasks = document.querySelectorAll('.task').length;
     const completedTasks = document.querySelectorAll('#done-tasks .task').length;
     const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-    
     document.getElementById('total-tasks').textContent = totalTasks;
     document.getElementById('completed-tasks').textContent = completedTasks;
     document.getElementById('progress-percent').textContent = progressPercent + '%';
-}
-
-// function addNewTaskModal(status) {
-    // document.getElementById("newTaskModal").classList.remove("hide");
-    // document.getElementById("modalOverlay").classList.remove("hide");
-    // document.getElementById("modalSubmit").name = status;
-    // document.getElementById("titleValue").focus();
-    // document.getElementById("titleValue").select();
-// }
-
-function editTaskModal(editTaskId) {
-    document.getElementById("editTaskModal").classList.remove("hide");
-    document.getElementById("modalOverlay").classList.remove("hide");
-    document.getElementById("editTitleValue").focus();
-    document.getElementById("editTitleValue").select();
-    var currentTask = editTaskId.parentNode.parentNode;
-    var currentTaskId = editTaskId.id;
-    var currentColumn = document.querySelector('[data-task-id=' + currentTaskId + ']');
-    var statusName = currentColumn.parentNode.parentNode.attributes["data-status"];
-    var currentTitle = currentTask.querySelector(".task-title");
-    var currentDescription = currentTask.querySelector(".task-description");
-    var currentPriority = currentTask.querySelector(".task-priority");
-    var currentAuthor = currentTask.querySelector(".task-assignee");
-    var editModal = document.getElementById("innerEditModal");
-    editModal.innerHTML = `
-        <div class="task-title"><input id="editTitleValue" placeholder="Title" value="${currentTitle.innerText}" autofocus></div>
-        <div class="task-description"><input id="editDescriptionValue" placeholder="Description" value="${currentDescription.innerText}"></div>
-        <div class="">
-            <label class="task-priority" for="priority">Priority:</label><br />
-            <input type="range" min="0" max="2" id="editPriorityValue" name="priority" list="values" value="${currentPriority.innerText}">
-
-            <datalist id="values">
-                <option value="0" label="low">low</option>
-                <option value="1" label="medium">medium</option>
-                <option value="2" label="high">high</option>
-            </datalist>
-        </div>
-        <div class="task-meta">
-        <input id="editAuthorValue" placeholder="Author" value="${currentAuthor.innerText}">
-        </div>
-        <input id="editTaskStatus" type="hidden" value="${statusName.value}">
-        <input id="taskID" type="hidden" value="${currentTaskId}">
-    `
 }
 
 function setupPrioritySelection() {
@@ -287,24 +244,20 @@ function setupPrioritySelection() {
 function setupModal() {
     const form = document.getElementById('taskForm');
     const modal = document.getElementById('taskModal');
-    
     // Handle form submission
     form.addEventListener('submit', handleFormSubmit);
-    
     // Close modal when clicking on the overlay (outside the modal)
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             closeTaskModal();
         }
     });
-    
     // Close modal with Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.classList.contains('show')) {
             closeTaskModal();
         }
     });
-    
     // Initialize priority selection buttons
     setupPrioritySelection();
 }
@@ -313,20 +266,17 @@ function changeSubmitModal(buttonRole) {
     const form = document.getElementById('taskForm');
     form.replaceWith(form.cloneNode(true));
     setupPrioritySelection();
-    replacedForm = document.getElementById('taskForm');
+    const replacedForm = document.getElementById('taskForm');
+    
     if (buttonRole == "Edit Task") {
         replacedForm.addEventListener('submit', editTask);
-        button = document.getElementById("submitTask");
+        const button = document.getElementById("submitTask");
         button.innerText = "➕ " + buttonRole;
     } else {
         replacedForm.addEventListener('submit', handleFormSubmit);
-        button = document.getElementById("submitTask");
+        const button = document.getElementById("submitTask");
         button.innerText = "➕ " + buttonRole;
     }
-    //form.addEventListener('submit', handleFormSubmit);
-    // Change form submission function
-    // form.addEventListener('submit', handleEditFormSubmit);
-    // form.addEventListener('submit', handleFormSubmit);
 }
 
 function addNewTaskModal(status) {
