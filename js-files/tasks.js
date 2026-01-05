@@ -369,13 +369,13 @@ function handleFormSubmit(e) {
 }
 
 function deleteTask(deleteId) {
-    taskToDelete = taskObj[deleteId.id];
+    const taskToDelete = taskObj[deleteId.id];
     // Delete from linked
-    linkedDict = taskToDelete.linked;
-    linkedBoards = Object.keys(linkedDict);
+    const linkedDict = taskToDelete.linked;
+    const linkedBoards = Object.keys(linkedDict);
     linkedBoards.forEach(linkedBoard => {
-        var linkedTasks = boards.boardTasks(linkedBoard);
-        linkedTasksIds = Object.keys(taskToDelete.linked[linkedBoard]);
+        const linkedTasks = boards.boardTasks(linkedBoard);
+        const linkedTasksIds = Object.keys(taskToDelete.linked[linkedBoard]);
         linkedTasksIds.forEach(linkedTaskId => {
             delete linkedTasks[linkedTaskId]["linked"][taskToDelete.board][deleteId.id];
             //const index = linkedArray.indexOf(deleteId.id);
@@ -394,8 +394,7 @@ function deleteTask(deleteId) {
     // Delete task in object
     delete taskObj[deleteId.id];
     // Delete task in HTML by moving up the hierarchy
-    var wholeTask = deleteId.parentNode;
-    wholeTask = wholeTask.parentNode;
+    const wholeTask = deleteId.parentNode;
     wholeTask.parentNode.removeChild(wholeTask);
     // Save new array to local
     persistence.saveTasks(boardTitle, taskObj);
