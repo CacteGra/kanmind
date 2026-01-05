@@ -691,7 +691,12 @@ function workedOn(taskId){
     timestamp = ((new Date()).toISOString()).split('T')[0];
     taskObj[taskId.id].timestamps.push(timestamp);
     taskId.innerHTML = "☑";
-    persistence.saveTasks(boardTitle, taskObj);  
+    persistence.saveTasks(boardTitle, taskObj);
+    const newHeatmap = heatmap.updateTaskHeatmap(taskObj[taskId.id]);
+    const currentTaskInfo = document.querySelector('[data-task-id=' + taskId.id + ']');
+    const heatmapDiv = currentTaskInfo.querySelector('.heatmap-div');
+    console.log(heatmapDiv);
+    heatmapDiv.innerHTML = newHeatmap;
 }
 
 // Initialize the board
@@ -702,7 +707,6 @@ function initializeBoard() {
     if (Object.keys(taskObj).length === 0 && boardTitle === "KanMindTasks") {
         initialTasks.forEach(task => {
             taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
-            todayDate = ((new Date()).toISOString()).split('T')[0];
             var d = new Date();
             dayBefore = (new Date(d.setDate(d.getDate() - 2))).toISOString().split('T')[0];
             var d = new Date();
@@ -716,7 +720,7 @@ function initializeBoard() {
                 priority: task.priority,
                 assignee: task.assignee,
                 status: task.status,
-                timestamps: [todayDate, dayBefore, lastWeek, lastMonth],
+                timestamps: [dayBefore, lastWeek, lastMonth],
                 board: boardTitle,
                 linked: null
             };

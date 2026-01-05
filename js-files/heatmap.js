@@ -58,4 +58,28 @@ heatmap = {
             return html;
         },
 
+        updateTaskHeatmap: function(task) {
+            const days = 30;
+            today = new Date();
+            const counts = new Array(days).fill(0);
+            console.log(task);
+            timestamps = task.timestamps;
+            timestamps.forEach(t => {
+                const delta = Math.floor((today - new Date(t)) / (1000 * 60 * 60 * 24));
+                if (delta >= 0 && delta < days) {
+                    counts[delta] += 1;
+                }
+            });
+
+            let html = `<div class="gh-heatmap">`;
+
+            for (let i = days - 1; i >= 0; i--) {
+                const count = counts[i];
+                html += `<div class="gh-cell" style="background:${heatmap.heatColor(count)}"></div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        },
+
 }
