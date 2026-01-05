@@ -640,33 +640,39 @@ h1 {
 }
 
 .priority-option.high {
-    color: #dc2626;
+    color: transparent;
+    text-shadow: 0 0 0 #dc2626;
 }
 
 .priority-option.high.selected {
     border-color: #dc2626;
     background: #fee2e2;
-    color: #dc2626;
+    color: transparent;
+    text-shadow: 0 0 0 #dc2626;
 }
 
 .priority-option.medium {
-    color: #d97706;
+    color: transparent;
+    text-shadow: 0 0 0 #d97706;
 }
 
 .priority-option.medium.selected {
     border-color: #d97706;
     background: #fef3c7;
-    color: #d97706;
+    color: transparent;
+    text-shadow: 0 0 0 #d97706;
 }
 
 .priority-option.low {
-    color: #059669;
+    color: transparent;
+    text-shadow: 0 0 0 #059669;
 }
 
 .priority-option.low.selected {
     border-color: #059669;
     background: #d1fae5;
-    color: #059669;
+    color: transparent;
+    text-shadow: 0 0 0 #059669;
 }
 
 .overlay {
