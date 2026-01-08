@@ -402,8 +402,8 @@ function deleteTask(deleteId) {
 
 function editTask(e) {
     e.preventDefault();
-    var taskId = document.getElementById("taskID");
-    currentTask = document.querySelector('[data-task-id=' + taskId.value + ']');
+    const taskId = document.getElementById("taskID").value;
+    const currentTask = document.querySelector('[data-task-id=' + taskId + ']');
     const title = document.getElementById('taskTitle').value.trim();
     const description = document.getElementById('taskDescription').value.trim();
     const assignee = document.getElementById('taskAssignee').value.trim() || 'Unassigned';
@@ -413,12 +413,11 @@ function editTask(e) {
         alert('Please enter a task title');
         return;
     }
-    linkedTasks = document.getElementById("links-"+taskId.value);
-
-    oldTask = taskObj[taskId.value]
-
+    
+    const linkedTasks = document.getElementById("links-"+taskId);
+    const oldTask = taskObj[taskId]
     const newTaskEdit = {
-        id: taskId.value,
+        id: taskId,
         title: title,
         description: description,
         priority: priority,
