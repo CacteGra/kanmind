@@ -697,12 +697,10 @@ function initializeBoard() {
     if (Object.keys(taskObj).length === 0 && boardTitle === "KanMindTasks") {
         initialTasks.forEach(task => {
             taskIdCounter = Math.max(taskIdCounter, parseInt(task.id.split('-')[1]) || 0);
-            var d = new Date();
-            dayBefore = (new Date(d.setDate(d.getDate() - 2))).toISOString().split('T')[0];
-            var d = new Date();
-            lastWeek = (new Date(d.setDate(d.getDate() - 7))).toISOString().split('T')[0];
-            var d = new Date();                 
-            lastMonth = (new Date(d.setDate(d.getDate() - 30))).toISOString().split('T')[0];
+            const dayBefore = (new Date(new Date().setDate(new Date().getDate() - 2))).toISOString().split('T')[0];
+            const lastWeek = (new Date(new Date().setDate(new Date().getDate() - 7))).toISOString().split('T')[0];
+            const lastMonth = (new Date(new Date().setDate(new Date().getDate() - 30))).toISOString().split('T')[0];
+
             const newTask = {
                 id: task.id,
                 title: task.title,
@@ -712,9 +710,9 @@ function initializeBoard() {
                 status: task.status,
                 timestamps: [dayBefore, lastWeek, lastMonth],
                 board: boardTitle,
-                linked: null
+                linked: {}
             };
-            newTask["linked"] = {};
+
             taskObj[newTask.id] = newTask;
             const taskElement = createTaskElement(newTask);
             document.getElementById(`${task.status}-tasks`).appendChild(taskElement);
