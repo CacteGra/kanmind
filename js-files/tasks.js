@@ -619,14 +619,13 @@ function updateTaskLinkDisplay(task) {
 function linkTask(btn) {
     linkingMode = !linkingMode;
     const tasks = document.querySelectorAll('.task');
-    linkSourceTask = btn.parentNode.parentNode;
+    const linkSourceTask = btn.parentNode.parentNode;
     linkingOrigin = linkSourceTask.dataset.taskId;
     linkSourceTask.classList.add('link-source');
     
     // Changing link button
     if (linkingMode) {
-        var linkingReminder;
-        linkingReminder = document.querySelector(".linking-reminder");
+        const linkingReminder = document.querySelector(".linking-reminder");
         linkingReminder.style.display = 'block';
         btn.classList.add('activating');
         btn.innerHTML = '🔗 Select task to link';
@@ -634,8 +633,8 @@ function linkTask(btn) {
             task.classList.add('linking-mode');
             task.draggable = false;
         });
-        var cancelButtons = document.querySelectorAll("."+hideCancelLink);
-        var oldHideCancelLink = hideCancelLink;
+        const cancelButtons = document.querySelectorAll("."+hideCancelLink);
+        const oldHideCancelLink = hideCancelLink;
         hideCancelLink = "cancel-link";
         cancelButtons.forEach(element => {
             element.classList.remove(oldHideCancelLink);
@@ -645,12 +644,12 @@ function linkTask(btn) {
 }
 
 function updateLinkModeButton(text) {
-    btn = document.querySelector('.activating');
+    let btn = document.querySelector('.activating');
     if (btn) {
         btn.innerHTML = text;
     } else {
         btn = document.querySelector('.activated');
-        if (btn){
+        if (btn) {
             btn.innerHTML = '🔗';
             btn.classList.remove('activated');
         }
@@ -658,7 +657,7 @@ function updateLinkModeButton(text) {
 }
 
 function highlightLinked(linkedId) {
-    var linkedTask = document.querySelector('[data-task-id=' + linkedId + ']');
+    const linkedTask = document.querySelector('[data-task-id=' + linkedId + ']');
     linkedTask.style.background = "chartreuse";
     linkedTask.scrollIntoView();
     setTimeout(() => {
@@ -667,20 +666,19 @@ function highlightLinked(linkedId) {
 }
 
 function checkWorkedOn(taskId) {
-    html = `<div class="modify-task worked" id="${taskId}" onclick="workedOn(this)">☑</div>`;
+    let html = `<div class="modify-task worked" id="${taskId}" onclick="workedOn(this)">☑</div>`;
     taskObj[taskId].timestamps.forEach(timestamp => {
         if (timestamp == ((new Date()).toISOString()).split('T')[0]) {
             html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">☑</div>`;
         } else {
-            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">✅</div>`;
-            
+            html = `<div class="modify-task worked" id=${taskId} onclick="workedOn(this)">✅</div>`;   
         }
     });
     return html;
 }
 
 function workedOn(taskId){
-    timestamp = ((new Date()).toISOString()).split('T')[0];
+    const timestamp = ((new Date()).toISOString()).split('T')[0];
     taskObj[taskId.id].timestamps.push(timestamp);
     taskId.innerHTML = "☑";
     persistence.saveTasks(boardTitle, taskObj);
