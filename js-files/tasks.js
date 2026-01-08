@@ -486,30 +486,28 @@ function cancelLink() {
 }
 
 function handleTaskClick(e) {
-    if (e.target.innerHTML == "❌") {
-        return;
-    };
+    if (e.target.innerHTML == "❌") return;
     if (!linkingMode) return;
     
     e.stopPropagation();
     const clickedTask = this;
     const clickedTaskId = clickedTask.dataset.taskId;
     const clickedTaskBoardId = clickedTask.dataset.boardId;
-    boardTasks = boards.boardTasks(clickedTaskBoardId);
-    clickedtaskObj = boardTasks[clickedTaskId];
+    const boardTasks = boards.boardTasks(clickedTaskBoardId);
+    const clickedtaskObj = boardTasks[clickedTaskId];
     // Second click - link to target task
     const sourceTaskId = linkSourceTask.dataset.taskId;
     const sourceTaskBoardId = linkSourceTask.dataset.boardId;
-    boardTasks = boards.boardTasks(sourceTaskBoardId);
-    sourcetaskObj = boardTasks[sourceTaskId];
+    const boardTasks = boards.boardTasks(sourceTaskBoardId);
+    const sourcetaskObj = boardTasks[sourceTaskId];
     if (sourceTaskId == clickedTaskId && sourcetaskObj.board == clickedtaskObj.board) {
         return false;
     } else {
         // Create link
-        text = createLink(sourcetaskObj, clickedtaskObj);
+        const text = createLink(sourcetaskObj, clickedtaskObj);
         updateLinkModeButton(text);
         linkingOrigin = null;
-        btn = document.querySelector('.activating');
+        const btn = document.querySelector('.activating');
         if (btn) {
             btn.classList.remove('activating');
             btn.classList.add("activated");
@@ -518,16 +516,14 @@ function handleTaskClick(e) {
         tasks.forEach(task => {
             task.classList.remove('linking-mode', 'link-source');
             task.draggable = true;
-        });
-        linkSourceTask = null;
-        
+        });        
         setTimeout(() => {
             if (linkingMode) {
                 updateLinkModeButton('🔗 Select first task');
                 linkingMode = !linkingMode;
             }
-            var cancelButtons = document.querySelectorAll("."+hideCancelLink);
-            var oldHideCancelLink = hideCancelLink;
+            const cancelButtons = document.querySelectorAll("."+hideCancelLink);
+            const oldHideCancelLink = hideCancelLink;
             hideCancelLink = "cancel-link-hidden";
             cancelButtons.forEach(element => {
                 element.classList.remove(oldHideCancelLink);
@@ -549,10 +545,8 @@ function createLink(sourceTask, targetTask) {
         }
     }
     // Add link if it doesn't already exist
-    var linkedDict = {};
-    let sourceLinking = {};
-    let targetLinking = {}
-    targetLinking = {...targetTask};
+    const linkedDict = {};
+    const targetLinking = {...targetTask};
     if (Object.keys(sourceTask.linked).length > 0) {
         if (sourceTask["linked"][targetTask.board] !== undefined) {
             linkedDict = sourceTask['linked'][targetTask.board];
@@ -561,16 +555,19 @@ function createLink(sourceTask, targetTask) {
     delete targetLinking['linked'];
     linkedDict[targetLinking.id] = targetLinking;
     sourceTask['linked'][targetLinking.board] = linkedDict;
-    linkedDict = {};
-    sourceLinking = {...sourceTask};
+
+    const sourceLinking = {...sourceTask};
+    let targetDict = {};
     if (Object.keys(targetTask.linked).length > 0) {
-        linkedDict = targetTask['linked'][sourceTask.board];
+        targetDict = targetTask['linked'][sourceTask.board];
     }
     delete sourceLinking['linked'];
-    linkedDict[sourceLinking.id] = sourceLinking;
-    targetTask['linked'][sourceTask.board] = linkedDict;
-    var sourceTasks = boards.boardTasks(sourceTask.board);
+    targetDict[sourceLinking.id] = sourceLinking;
+    targetTask['linked'][sourceTask.board] = targetDict;
+
+    const sourceTasks = boards.boardTasks(sourceTask.board);
     sourceTasks[sourceTask.id] = sourceTask;
+
     if (sourceTask.board === targetTask.board) {
         sourceTasks[targetTask.id] = targetTask;
         persistence.saveTasks(sourceTask.board, sourceTasks);
@@ -580,7 +577,7 @@ function createLink(sourceTask, targetTask) {
         document.querySelector(`[data-task-id="${sourceTask.id}"]`).classList.add('linked');
     } else {
         persistence.saveTasks(sourceTask.board, sourceTasks);
-        var targetTasks = boards.boardTasks(targetTask.board);
+        const targetTasks = boards.boardTasks(targetTask.board);
         targetTasks[targetTask.id] = targetTask;
         persistence.saveTasks(targetTask.board, targetTasks);
         taskObj = targetTasks;
@@ -589,7 +586,7 @@ function createLink(sourceTask, targetTask) {
     // Mark tasks as linked
     document.querySelector(`[data-task-id="${targetTask.id}"]`).classList.add('linked');
 
-    linkingReminder = document.querySelector(".linking-reminder");
+    const linkingReminder = document.querySelector(".linking-reminder");
     linkingReminder.style.display = 'none';
     return '✅ Linked! Select another task';
 }
