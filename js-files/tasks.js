@@ -498,8 +498,8 @@ function handleTaskClick(e) {
     // Second click - link to target task
     const sourceTaskId = linkSourceTask.dataset.taskId;
     const sourceTaskBoardId = linkSourceTask.dataset.boardId;
-    const boardTasks = boards.boardTasks(sourceTaskBoardId);
-    const sourcetaskObj = boardTasks[sourceTaskId];
+    const boardTasks2 = boards.boardTasks(sourceTaskBoardId);
+    const sourcetaskObj = boardTasks2[sourceTaskId];
     if (sourceTaskId == clickedTaskId && sourcetaskObj.board == clickedtaskObj.board) {
         return false;
     } else {
