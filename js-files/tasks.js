@@ -592,7 +592,7 @@ function createLink(sourceTask, targetTask) {
 }
 
 function updateTaskLinkDisplay(task) {
-    taskId = task.id;
+    const taskId = task.id;
     const linksContainer = document.getElementById(`links-${taskId}`);
     if (!linksContainer) return;
     
@@ -601,15 +601,11 @@ function updateTaskLinkDisplay(task) {
     if (linkedTasksBoards.length > 0) {
         const taskElements = [];
         linkedTasksBoards.forEach(key => {
-            var linkedTasks = [];
-            linkedTasks = Object.values(task.linked[key]);
+            const linkedTasks = Object.values(task.linked[key]);
             if (linkedTasks) {
                 taskElements.push(linkedTasks.map(linkedId => {
-                    linkedIdHtml = linkedId.id;
-                    var linkedIdHtml;
-                    linksContainer.setAttribute('linked-data', linkedIdHtml);
                     const title = linkedId.title;
-                    return `<span class="link-badge span-${linkedIdHtml}" title="${title}" onclick="highlightLinked('${linkedIdHtml}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
+                    return `<span class="link-badge span-${linkedId.id}" title="${title}" onclick="highlightLinked('${linkedId.id}')"> ${title.substring(0, 15)}${title.length > 15 ? '...' : ''},</span>`;
                 }).join(' '));
             }
         })
