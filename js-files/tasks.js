@@ -456,11 +456,12 @@ function editTask(e) {
     closeTaskModal();
 }
 
+// Linking functions
 function cancelLink() {
-    linkingReminder = document.querySelector(".linking-reminder");
+    const linkingReminder = document.querySelector(".linking-reminder");
     linkingReminder.style.display = 'none';
     updateLinkModeButton("Linking canceled");
-    btn = document.querySelector('.activating');
+    const btn = document.querySelector('.activating');
     if (btn) {
         btn.classList.remove('activating');
         btn.classList.add("activated");
@@ -471,18 +472,17 @@ function cancelLink() {
         task.classList.remove('linking-mode', 'link-source');
         task.draggable = true;
     });
-    linkSourceTask = null;
-        setTimeout(() => {
-            updateLinkModeButton('🔗');
-            linkingMode = !linkingMode;
-            var cancelButtons = document.querySelectorAll("."+hideCancelLink);
-            var oldHideCancelLink = hideCancelLink;
-            hideCancelLink = "cancel-link-hidden";
-            cancelButtons.forEach(element => {
-                element.classList.remove(oldHideCancelLink);
-                element.classList.add(hideCancelLink);
-            });
-        }, 1000);
+    setTimeout(() => {
+        updateLinkModeButton('🔗');
+        linkingMode = !linkingMode;
+        const cancelButtons = document.querySelectorAll("."+hideCancelLink);
+        const oldHideCancelLink = hideCancelLink;
+        hideCancelLink = "cancel-link-hidden";
+        cancelButtons.forEach(element => {
+            element.classList.remove(oldHideCancelLink);
+            element.classList.add(hideCancelLink);
+        });
+    }, 1000);
 }
 
 function handleTaskClick(e) {
