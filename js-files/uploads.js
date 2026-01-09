@@ -1,5 +1,109 @@
 uploads = {
 
+    // MARKDOWN PARSING FUNCTIONS
+    parseMarkdownToBoards: function(markdown) {
+        const parsedBoards = [];
+        
+        // Split by board sections (looking for # emoji BoardName pattern)
+        const boardSections = markdown.split(/^# /m).filter(s => s.trim());
+        
+        boardSections.forEach(section => {
+            // Skip the "All Project Boards" header section
+            if (section.includes('📊 All Project Boards') || section.includes('All Project Boards')) {
+                return;
+            }
+            
+            const lines = section.split('\n');
+            if (lines.length === 0) return;
+            
+            // Parse board name and icon from first line
+            const firstLine = lines[0].trim();
+            
+            let board = firstLine;
+                        
+            // Parse tasks from sections
+            let currentStatus = null;
+            let currentTask = null;
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Detect status sections
+                if (line.startsWith('## ')) {
+                    if (line.includes('To Do') || line.includes('📋')) {
+                        currentStatus = 'todo';
+                    } else if (line.includes('In Progress') || line.includes('🔄')) {
+                        currentStatus = 'inprogress';
+                    } else if (line.includes('Review') || line.includes('👀')) {
+                        currentStatus = 'review';
+                    } else if (line.includes('Done') || line.includes('✅')) {
+                        currentStatus = 'done';
+                    } else {
+                        currentStatus = null; // Statistics or other sections
+                    }
+                    continue;
+                }
+                
+                // Detect task title (### TaskName)
+                if (line.startsWith('### ') && currentStatus) {
+                    // Save previous task if exists
+                    if (currentTask) {
+                        taskObj[currentTask.id] = currentTask
+                    }
+                    
+                    // Start new task
+                    currentTask = {
+                        id: `task-${taskIdCounter++}`,
+                        title: line.substring(4).trim(),
+                        description: '',
+                        priority: 'medium',
+                        assignee: 'Unassigned',
+                        status: currentStatus,
+                        timestamps: new Date(),
+                        board: board
+                    };
+                    continue;
+                }
+                
+                // Parse task properties
+                if (currentTask && line.startsWith('- **')) {
+                    const propertyMatch = line.match(/- \*\*(.+?):\*\* (.+)/);
+                    if (propertyMatch) {
+                        const key = propertyMatch[1].toLowerCase();
+                        const value = propertyMatch[2].trim();
+                        
+                        if (key === 'description') {
+                            currentTask.description = value;
+                        } else if (key === 'priority') {
+                            currentTask.priority = value.toLowerCase();
+                        } else if (key === 'assignee') {
+                            currentTask.assignee = value;
+                        } else if (key === 'last updated') {
+                            try {
+                                currentTask.timestamps = new Date(value);
+                            } catch (e) {
+                                currentTask.timestamps = new Date();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Last task
+            if (currentTask) {
+                taskObj[currentTask.id] = currentTask;
+            }
+            
+            // Only add board if it has a valid name and at least one task or was intentionally created
+            if (board && (Object.keys(taskObj).length > 0 || board !== 'All Project Boards')) {
+                persistence.saveTasks(board.name, taskObj);
+            }
+            parsedBoards.push(board);
+        });
+        
+        return parsedBoards;
+    },
+
     handleFileUpload: function(event) {
         const file = event.target.files[0];
         if (!file) return;
