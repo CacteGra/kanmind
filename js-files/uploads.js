@@ -6,7 +6,6 @@ uploads = {
         
         const reader = new FileReader();
         
-        reader.onload = function(e) {
-            const markdown = e.target.result;
+        reader.readAsText(file);
     },
 }
