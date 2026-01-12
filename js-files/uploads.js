@@ -2,7 +2,7 @@ uploads = {
 
     // MARKDOWN PARSING FUNCTIONS
     parseMarkdownToBoards: function(markdown) {
-        const parsedBoards = [];
+        const parsedBoards = {};
         
         // Split by board sections (looking for # emoji BoardName pattern)
         const boardSections = markdown.split(/^# /m).filter(s => s.trim());
@@ -59,7 +59,7 @@ uploads = {
                         priority: 'medium',
                         assignee: 'Unassigned',
                         status: currentStatus,
-                        timestamps: new Date(),
+                        timestamps: [],
                         board: board
                     };
                     continue;
@@ -80,9 +80,9 @@ uploads = {
                             currentTask.assignee = value;
                         } else if (key === 'last updated') {
                             try {
-                                currentTask.timestamps = new Date(value);
+                                currentTask.timestamps.push(value);
                             } catch (e) {
-                                currentTask.timestamps = new Date();
+                                currentTask.timestamps.push(new Date());
                             }
                         }
                     }
@@ -96,9 +96,17 @@ uploads = {
             
             // Only add board if it has a valid name and at least one task or was intentionally created
             if (board && (Object.keys(taskObj).length > 0 || board !== 'All Project Boards')) {
-                persistence.saveTasks(board.name, taskObj);
+                // let boardTasks = boards.boardTasks(board);
+                // if (boardTasks) {
+                //     boardTasks.forEach(boardTask => {
+                //         taskObj[]
+                //     })
+                // }
+                
+                persistence.saveTasks(board, taskObj);
             }
-            parsedBoards.push(board);
+            parsedBoards[board] = taskObj;
+            console.log(parsedBoards);
         });
         
         return parsedBoards;
@@ -116,7 +124,8 @@ uploads = {
             try {
                 const parsedBoards = uploads.parseMarkdownToBoards(markdown);
                 
-                if (parsedBoards.length === 0) {
+                const parsedBoardsKeys = Object.keys(parsedBoards);
+                if (parsedBoardsKeys.length === 0) {
                     alert('⚠️ No boards found in the markdown file. Please check the format.');
                     return;
                 }
@@ -128,24 +137,15 @@ uploads = {
                     `Click Cancel to REPLACE all existing boards.`
                 );
                 
-                if (!action) {
-                    // Replace all boards
-                    boards.length = 0;
-                    boards.push(...parsedBoards);
-                } else {
-                    // Add to existing boards
-                    boards.push(...parsedBoards);
-                }
-                
-                renderBoards();
-                
+                multiview.switchView();
+
                 // Show success message
                 let totalTasks = 0;
-                parsedBoards.forEach(b => totalTasks += b.tasks.length);
+                parsedBoardsKeys.forEach(b => totalTasks += Object.values(parsedBoards[b]).length);
                 
                 alert(
                     `✅ Successfully imported!\n\n` +
-                    `Boards: ${parsedBoards.length}\n` +
+                    `Boards: ${parsedBoardsKeys.length}\n` +
                     `Tasks: ${totalTasks}`
                 );
                 
