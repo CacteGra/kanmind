@@ -24,6 +24,8 @@ uploads = {
             // Parse tasks from sections
             let currentStatus = null;
             let currentTask = null;
+
+            const taskObj = {};
             
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -80,7 +82,7 @@ uploads = {
                             currentTask.assignee = value;
                         } else if (key === 'last updated') {
                             try {
-                                currentTask.timestamps.push(value);
+                                currentTask.timestamps = value.split(",");
                             } catch (e) {
                                 currentTask.timestamps.push(new Date());
                             }
