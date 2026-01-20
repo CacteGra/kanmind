@@ -9,6 +9,14 @@ let hideCancelLink = "cancel-link-hidden";
 let allBoards;
 let currentTaskStatus;
 
+// Touch/mobile drag variables
+let touchDragElement = null;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchOffsetX = 0;
+let touchOffsetY = 0;
+let lastTouchColumn = null;
+
 // Sample tasks to start with
 const initialTasks = [
     {
@@ -95,6 +103,11 @@ function createTaskElement(task) {
     taskDiv.addEventListener('dragstart', handleDragStart);
     taskDiv.addEventListener('dragend', handleDragEnd);
     taskDiv.addEventListener('click', handleTaskClick);
+
+    taskDiv.addEventListener('touchstart', handleTouchStart, { passive: false });
+    taskDiv.addEventListener('touchmove', handleTouchMove, { passive: false });
+    taskDiv.addEventListener('touchend', handleTouchEnd);
+
     return taskDiv;
 }
 
@@ -139,6 +152,10 @@ function createBaseTaskElement(task) {
     // Add drag event listeners
     taskDiv.addEventListener('dragstart', handleDragStart);
     taskDiv.addEventListener('dragend', handleDragEnd);
+    taskDiv.addEventListener('touchstart', handleTouchStart, { passive: false });
+    taskDiv.addEventListener('touchmove', handleTouchMove, { passive: false });
+    taskDiv.addEventListener('touchend', handleTouchEnd);
+
     document.getElementById(`${statusValue}-tasks`).appendChild(taskDiv);
 
     const newTask = {
@@ -159,6 +176,109 @@ function createBaseTaskElement(task) {
 }
 
 // Drag and drop functions
+
+// TOUCH EVENT HANDLERS FOR MOBILE
+function handleTouchStart(e) {
+    if (linkingMode) return; // Don't drag in linking mode
+    
+    e.preventDefault();
+    
+    touchDragElement = this;
+    const touch = e.touches[0];
+    const rect = this.getBoundingClientRect();
+    
+    // Calculate offset from touch point to element position
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+    
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    
+    // Add dragging class
+    this.classList.add('touch-dragging');
+    
+    // Store original position
+    this.dataset.originalLeft = rect.left;
+    this.dataset.originalTop = rect.top;
+    this.dataset.originalWidth = rect.width;
+}
+
+function handleTouchMove(e) {
+    if (!touchDragElement) return;
+    
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    
+    // Move element to follow touch
+    touchDragElement.style.left = (touch.clientX - touchOffsetX) + 'px';
+    touchDragElement.style.top = (touch.clientY - touchOffsetY) + 'px';
+    touchDragElement.style.width = touchDragElement.dataset.originalWidth + 'px';
+    
+    // Check which column we're over
+    const columns = document.querySelectorAll('.column');
+    let foundColumn = null;
+    
+    columns.forEach(column => {
+        const rect = column.getBoundingClientRect();
+        if (touch.clientX >= rect.left && 
+            touch.clientX <= rect.right && 
+            touch.clientY >= rect.top && 
+            touch.clientY <= rect.bottom) {
+            foundColumn = column;
+        }
+    });
+    
+    // Update visual feedback
+    columns.forEach(col => col.classList.remove('drag-over'));
+    if (foundColumn) {
+        foundColumn.classList.add('drag-over');
+        lastTouchColumn = foundColumn;
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!touchDragElement) return;
+    
+    e.preventDefault();
+    
+    // Remove dragging state
+    touchDragElement.classList.remove('touch-dragging');
+    touchDragElement.style.left = '';
+    touchDragElement.style.top = '';
+    touchDragElement.style.width = '';
+    touchDragElement.style.position = '';
+    
+    // Drop into column if over one
+    if (lastTouchColumn) {
+        const tasksContainer = lastTouchColumn.querySelector('.tasks');
+        tasksContainer.appendChild(touchDragElement);
+        
+        // Update task status in data
+        const taskId = touchDragElement.dataset.taskId;
+        const newStatus = lastTouchColumn.dataset.status;
+        
+        // Update in initial tasks array if exists
+        const task = initialTasks.find(t => t.id === taskId);
+        if (task) {
+            task.status = newStatus;
+        }
+        
+        updateTaskCounts();
+        updateStats();
+        
+        // Redraw links if in linking mode
+        setTimeout(() => {
+            if (linkingMode) drawLinks();
+        }, 100);
+    }
+    
+    // Clear drag state
+    document.querySelectorAll('.column').forEach(col => col.classList.remove('drag-over'));
+    touchDragElement = null;
+    lastTouchColumn = null;
+}
+
 function handleDragStart(e) {
     draggedElement = this;
     this.classList.add('dragging');
