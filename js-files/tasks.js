@@ -5,6 +5,7 @@ let boardTitle;
 let draggedElement = null;
 let linkingMode = false;
 let linkingOrigin = null;
+let linkSourceTask = null;
 let hideCancelLink = "cancel-link-hidden";
 let allBoards;
 let currentTaskStatus;
@@ -750,7 +751,7 @@ function updateTaskLinkDisplay(task) {
 function linkTask(btn) {
     linkingMode = !linkingMode;
     const tasks = document.querySelectorAll('.task');
-    const linkSourceTask = btn.parentNode.parentNode;
+    linkSourceTask = btn.parentNode.parentNode;
     linkingOrigin = linkSourceTask.dataset.taskId;
     linkSourceTask.classList.add('link-source');
     
