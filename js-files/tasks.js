@@ -180,6 +180,17 @@ function createBaseTaskElement(task) {
 // TOUCH EVENT HANDLERS FOR MOBILE
 function handleTouchStart(e) {
     if (linkingMode) return; // Don't drag in linking mode
+    const target = e.target;
+    const isButton = target.classList.contains('modify-task') || 
+                    target.classList.contains('edit-form') || 
+                    target.classList.contains('delete-bin') ||
+                    target.classList.contains('link-badge') ||
+                    target.closest('.modify-task');
+    
+    if (isButton) {
+        // Don't prevent default, let the button handle its click
+        return;
+    }
     
     e.preventDefault();
     
