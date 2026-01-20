@@ -47,7 +47,7 @@ heatmap = {
                 }
             });
 
-            let html = `<div class="heatmap-div"><div class="gh-heatmap">`;
+            let html = `<div class="heatmap-div"><div class="gh-heatmap-task">`;
 
             for (let i = days - 1; i >= 0; i--) {
                 const count = counts[i];
