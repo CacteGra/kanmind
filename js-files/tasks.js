@@ -526,7 +526,7 @@ function deleteTask(deleteId) {
     // Delete task in object
     delete taskObj[deleteId.id];
     // Delete task in HTML by moving up the hierarchy
-    const wholeTask = deleteId.parentNode;
+    const wholeTask = deleteId.parentNode.parentNode;
     wholeTask.parentNode.removeChild(wholeTask);
     // Save new array to local
     persistence.saveTasks(boardTitle, taskObj);
