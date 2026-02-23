@@ -50,5 +50,10 @@ persistence = {
         }
 
         return values;
+    },
+
+    resetKanmind: function() {
+        localStorage.clear();
+        location.reload();
     }
 }
