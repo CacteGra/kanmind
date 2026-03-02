@@ -481,6 +481,20 @@ h1 {
     }
 }
 
+@media (max-width: 450px) {
+    .down-up-load {
+        display: inline-grid;
+        gap: 20px;
+    }
+}
+
+@media (min-width: 451px) {
+    .down-up-load {
+        display: flex;
+        gap: 20px;
+    }
+}
+
 /* Modal Styles */
 .modal-overlay {
     display: none;
@@ -981,10 +995,10 @@ label {
   max-width: 120px;
 }
 
-.down-up-load {
+/* .down-up-load {
     display: flex;
     gap: 20px;
-}
+} */
 
 .main-download {
     width: 100%;
