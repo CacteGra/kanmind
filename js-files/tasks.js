@@ -269,12 +269,9 @@ function handleTouchEnd(e) {
         // Update task status in data
         const taskId = touchDragElement.dataset.taskId;
         const newStatus = lastTouchColumn.dataset.status;
-        
         // Update in initial tasks array if exists
-        const task = initialTasks.find(t => t.id === taskId);
-        if (task) {
-            task.status = newStatus;
-        }
+        taskObj[taskId].status = newStatus;
+        persistence.saveTasks(boardTitle, taskObj);
         
         updateTaskCounts();
         updateStats();
